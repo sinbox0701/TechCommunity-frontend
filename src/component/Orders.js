@@ -28,12 +28,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   Table:{
-    backgroundColor:"#e1e1e1"
+    backgroundColor:"#fbfcfe"
   },
   row : {
     width: "90%",
     margin : "dense",
-    backgroundColor:"#f9f9f9"
+    backgroundColor:"#ffffff"
   }
 }));
 

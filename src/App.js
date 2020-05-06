@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
@@ -30,7 +31,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
-import { mainListItems, secondaryListItems } from './component/listItems';
+import { mainListItems } from './component/listItems';
 import OnProj from './component/OnProj';
 import OffProj from './component/OffProj';
 import Orders from './component/Orders';
@@ -39,8 +40,11 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link component='a' color="inherit" href="https://www.kitech.re.kr/main/">
+        KITECH
+      </Link>{' & '}
+      <Link component='a' color="inherit" href="https://www.uxidstudio.com/">
+        UCID
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -53,6 +57,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    minWidth: 1340,
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -72,6 +77,7 @@ const useStyles = makeStyles((theme) => ({
     mariginTop: "5%",
     height:"90%"
   },
+
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
@@ -96,7 +102,8 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
-    color : "#a3a3a3",
+    color : "#6a6d74",
+    fontWeight : "Bold",
   },
   drawerPaper: {
     position: 'relative',
@@ -119,22 +126,33 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   appBarSpacer: theme.mixins.toolbar,
+
   content: {
     flexGrow: 1,
-    height: '100vh',
     overflow: 'auto',
     backgroundColor: "#ffffff"
   },
+
   container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
+    width:"auto",
+    overflow: 'auto',
   },
+
   paper: {
-    padding: theme.spacing(2),
+    paddingTop: theme.spacing(3),
+    paddingLeft: theme.spacing(6),
+    paddingRight: theme.spacing(6),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
   },
+
+  sidepaper: {
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: '#fbfcfe'
+  },
+
   schedheight:{
     height: 360,
   },
@@ -161,11 +179,12 @@ function App() {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const fixedHeightSidePaper = clsx(classes.sidepaper, classes.fixedHeight);
 
   return (
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+        <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)} >
           <Toolbar className={classes.toolbar}>
             <IconButton
               edge="start"
@@ -206,6 +225,8 @@ function App() {
               label="지식공유 플랫폼"
               color="primary"
               clickable
+              component="a"
+              href="https://video-platform-93f91.firebaseapp.com"
               icon={<ArrowForwardIosIcon/>}
             />
 
@@ -230,42 +251,45 @@ function App() {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <Container maxWidth="lg" className={classes.container}>
-            <Grid container spacing={3}>
+          <Box className={classes.container}>
+            <Grid container >
               {/* 진행중인 공연 */}
-              <Grid item xs={12} md={8} lg={9}>
+              <Grid item xs={9}>
                 <Box className={fixedHeightPaper}>
                   <OnProj />
                 </Box>
-              </Grid>
-              {/* calendar */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Box className={classes.paper}>
-                  <Calendar/>
-                </Box>
-              </Grid>
-              {/* 나의 업무 */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Box className={classes.paper}>
+                <Box className={fixedHeightPaper}>
                   <Orders />
                 </Box>
-              </Grid>
-              {/* 메모 */}
-              <Grid item xs={12} md={4} lg={3}>
                 <Box className={fixedHeightPaper}>
-                  <Typography>
-                    메모
-                  </Typography>
-                  <ButtonBase className={classes.new}>
-                    <AddIcon />
-                    새로운 공연
-                  </ButtonBase>
+                  <OffProj />
                 </Box>
               </Grid>
-              {/* 종료된 공연 */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Box className={classes.paper}>
-                  <OffProj />
+              
+              {/* calendar */}
+              <Grid item xs={3}>
+                <Box className={classes.sidepaper} style={ { border : '1px solid #e0e4ee' }}>
+                  <Calendar className={classes.new}/>  
+                  <Typography>
+                    다가오는 일정
+                  </Typography>
+                  <Typography>
+                    일정1
+                  </Typography>
+                  <Typography>
+                    일정1
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography align="center" style={ {fontSize:25, height: 40, border : '1px solid #e0e4ee' } }>
+                    메모
+                  </Typography>
+                </Box>
+                <Box className={fixedHeightSidePaper} style={ { border : '1px solid #e0e4ee' } }>
+                  <ButtonBase className={classes.new} >
+                    <AddIcon />
+                    메모 추가
+                  </ButtonBase>
                 </Box>
               </Grid>
             </Grid>
@@ -273,7 +297,7 @@ function App() {
             <Box pt={4}>
               <Copyright />
             </Box>
-          </Container>
+          </Box>
         </main>
       </div>
     );
