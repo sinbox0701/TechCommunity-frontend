@@ -63,61 +63,57 @@ export default function RecipeReviewCard() {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [completed, setCompleted] = React.useState(74);
+  const [performance, setPerformance] = React.useState([]);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+  React.useEffect(()=>{
+     fetch('http://127.0.0.1:8000/Performance')
+         .then(response => response.json())
+         .then(data => {
 
-  return (
-    <div>
-    <Title>진행중인 공연</Title>
-    <div className={classes.items}>
+             setPerformance(data);
+         })
+  },[]);
 
-    <Card className={classes.root}>
-        <CardHeader
-            className={classes.cardHead}
-            action={
-            <IconButton aria-label="settings">
-                <MoreVertIcon />
-            </IconButton>
-            }
-            title="기억극장"
-            subheader="콘서트"
-        />
-        <Divider/>
-        <CardContent className={classes.progress}>
-            <Typography color="primary">{`${15}%`}</Typography>
-            <LinearProgress variant="determinate" value={15} />
-        </CardContent>
-        </Card>
+return (
+        <div>
+            <Title>진행중인 공연</Title>
+            <div className={classes.items}>
+                {
 
-        <Card className={classes.root}>
-        <CardHeader
-            className={classes.cardHead}
-            action={
-            <IconButton aria-label="settings">
-                <MoreVertIcon />
-            </IconButton>
-            }
-            title="플라잉"
-            subheader="뮤지컬"
-        />
-        <Divider/>
-        <CardContent className={classes.progress}>
-            <Typography color="primary">{`${completed}%`}</Typography>
-            <LinearProgress variant="determinate" value={completed} />
-        </CardContent>
-        </Card>
+                    performance === undefined ? "" :
+                        performance.map(p => {
+                            return (
+                                <Card className={classes.root} key={p.id}>
+                                    <CardHeader
+                                        className={classes.cardHead}
+                                        action={
+                                            <IconButton aria-label="settings">
+                                                <MoreVertIcon />
+                                            </IconButton>
+                                        }
+                                        title={p.title}
+                                        subheader={p.genre}
+                                    />
+                                    <Divider />
+                                    <CardContent className={classes.progress}>
+                                        <Typography color="primary">{`${15}%`}</Typography>
+                                        <LinearProgress variant="determinate" value={15} />
+                                    </CardContent>
+                                </Card>
+                            );
+                        })
+                }
+                <Card className={classes.root}>
+                    <ButtonBase className={classes.new}>
+                        <AddIcon />
+                        새로운 공연
+                    </ButtonBase>
+                </Card>
+            </div>
+        </div>
+    );
 
-        <Card className={classes.root}>
-            <ButtonBase className={classes.new}>
-                <AddIcon />
-                새로운 공연
-            </ButtonBase>
-        </Card>
-
-    </div>
-
-    </div>
-  );
 }
