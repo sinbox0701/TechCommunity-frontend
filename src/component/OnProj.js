@@ -24,7 +24,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
+import DeleteIcon from '@material-ui/icons/Delete'
 
 
 import axios from 'axios';
@@ -75,6 +75,9 @@ const useStyles = makeStyles((theme) => ({
       cursor: 'pointer',
     padding: '5px'
   },
+  icon:{
+        float:"right"
+  }
 
 }));
 
@@ -84,11 +87,7 @@ export default function RecipeReviewCard() {
   const [completed, setCompleted] = React.useState(74);
   const [performance, setPerformance] = React.useState([]);
   const [value, setValue] = React.useState([]);
-  //const [performance, setPerformance] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  // const [title, setTitle] = React.useState('');
-  // const [genre, setGenre] = React.useState('');
-  // const [concept, setConcept] = React.useState('');
   const [inputs, setInputs] = React.useState({
       genre:"",
       title:"",
@@ -99,6 +98,18 @@ export default function RecipeReviewCard() {
   });
   const {genre, title, direction, construct, check, date} = inputs;
 
+  const delClick = (event) => {
+    event.preventDefault();
+    const {id} = event.target;
+    fetch(`http://127.0.0.1:8000/Tech/delete/${id}/`,{
+        method:'DELETE',
+        headers:{
+             'content-type' : 'application/json'
+         },
+    }).then(res => res.json).then(data => console.log(data));
+    console.log(`hi ${id}`)
+
+  };
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -165,30 +176,15 @@ return (
                         performance.map(p => {
                             return (
                                 <Card className={classes.root} key={p.id}>
+                                    <IconButton aria-label="settings" className={classes.icon} id={p.id} onClick={delClick} >
+                                        <DeleteIcon />
+                                    </IconButton>
                                     <CardHeader
                                         className={classes.cardHead}
-                                        action={
-                                            <IconButton aria-label="settings">
-                                                    <Popup
-                                                        trigger={<MoreVertIcon/>}
-                                                        position="bottom center"
-                                                        on="hover"
-                                                         closeOnDocumentClick
-                                                         mouseLeaveDelay={300}
-                                                         mouseEnterDelay={0}
-                                                        contentStyle={{ padding: "0px", border: "none",  width:"150%"}}
-                                                        arrow={false}
-                                                    >
-                                                       <div className="menu">
-                                                            <div className={classes.menuItem}> modify</div>
-                                                            <div className={classes.menuItem}> delete</div>
-                                                        </div>
-                                                    </Popup>
-                                            </IconButton>
-                                        }
                                         title={p.title}
                                         /*subheader={p.genre}*/
                                     />
+
                                     <Divider />
                                     <CardContent className={classes.progress}>
                                         <Typography color="primary">{`${15}%`}</Typography>
