@@ -90,11 +90,14 @@ export default function RecipeReviewCard() {
   // const [genre, setGenre] = React.useState('');
   // const [concept, setConcept] = React.useState('');
   const [inputs, setInputs] = React.useState({
-     title:"",
-     genre:"",
-     concept:""
+      genre:"",
+      title:"",
+      direction:"",
+      construct:"",
+      check:"",
+      date:""
   });
-  const {title, genre, concept} = inputs;
+  const {genre, title, direction, construct, check, date} = inputs;
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -117,12 +120,15 @@ export default function RecipeReviewCard() {
   const onSubmit = (e) =>{
       e.preventDefault();
        const post = {
-        title: title,
-        genre: genre,
-        concept: concept
+           genre:genre,
+           title:title,
+           direction:direction,
+           construct:construct,
+           check:check,
+           date:date
     };
     console.log(post);
-    fetch('http://127.0.0.1:8000/Performance/add/',{
+    fetch('http://127.0.0.1:8000/Tech/add/',{
          method: "POST",
          headers:{
              'content-type' : 'application/json'
@@ -133,7 +139,7 @@ export default function RecipeReviewCard() {
   };
 
   React.useEffect(()=>{
-     fetch('http://127.0.0.1:8000/Performance')
+     fetch('http://127.0.0.1:8000/Tech/')
          .then(response => response.json())
          .then(data => {
              console.log(data);
@@ -181,7 +187,7 @@ return (
                                             </IconButton>
                                         }
                                         title={p.title}
-                                        subheader={p.genre}
+                                        /*subheader={p.genre}*/
                                     />
                                     <Divider />
                                     <CardContent className={classes.progress}>
@@ -208,17 +214,6 @@ return (
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="title"
-                        label="Title"
-                        type="title"
-                        name="title"
-                        value={title}
-                        onChange={onChange}
-                        fullWidth
-                    />
-                    <TextField
-                        autoFocus
-                        margin="dense"
                         id="genre"
                         label="Genre"
                         type="genre"
@@ -230,36 +225,56 @@ return (
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="concept"
-                        label="Concept"
-                        type="concept"
-                        name="concept"
-                        value={concept}
+                        id="title"
+                        label="Title"
+                        type="title"
+                        name="title"
+                        value={title}
                         onChange={onChange}
                         fullWidth
                     />
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="story"
-                        label="Story"
-                        type="story"
+                        id="direction"
+                        label="Direction"
+                        type="direction"
+                        name="direction"
+                        value={direction}
+                        onChange={onChange}
                         fullWidth
                     />
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="start"
-                        label="시작일"
-                        type="start"
+                        id="construct"
+                        label="Construct"
+                        type="construct"
+                        name="construct"
+                        value={construct}
+                        onChange={onChange}
                         fullWidth
                     />
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="finish"
-                        label="종료일"
-                        type="finish"
+                        id="check"
+                        label="Check"
+                        type="check"
+                        name="check"
+                        value={check}
+                        onChange={onChange}
+                        fullWidth
+                    />
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="date"
+                        label="Date"
+                        type="date"
+                        name="date"
+                        value={date}
+                        onChange={onChange}
                         fullWidth
                     />
                 </DialogContent>
