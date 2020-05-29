@@ -1,11 +1,8 @@
 import React from 'react';
-import Link from '@material-ui/core/Link';
+
 import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+
+import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core'
 import Title from './Title';
 
 // Generate Order Data
@@ -28,12 +25,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   Table:{
-    backgroundColor:"#e1e1e1"
+    backgroundColor:"#fbfcfe"
   },
   row : {
     width: "90%",
     margin : "dense",
-    backgroundColor:"#f9f9f9"
+    backgroundColor:"#ffffff"
   }
 }));
 
@@ -41,7 +38,16 @@ export default function Orders() {
   const classes = useStyles();
   return (
     <React.Fragment>
-      <Title>나의 업무</Title>
+                  <Typography style={{  fontFamily: 'NotoSansCJKkr',
+                                  fontSize: 20,
+                                  fontWeight: 550,
+                                  fontStretch: 'normal',
+                                  fontStyle: 'normal',
+                                  lineHeight: 'normal',
+                                  letterSpacing: 'normal',
+                                  color: '#232426',
+            marginLeft:20}}
+            >나의 업무</Typography>
       <Table className={classes.Table}>
         <TableHead>
           <TableRow>

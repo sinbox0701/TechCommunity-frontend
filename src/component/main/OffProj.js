@@ -27,7 +27,11 @@ const useStyles = makeStyles((theme) => ({
       },
   
     root: {
-    width: 250,
+    width: 280,
+    height: 132,
+    boxShadow: '0 3px 8px -2px #cacfdb',
+    border: 'solid 1px #e3e7f0',
+    backgroundColor: '#ffffff',
   },
   expand: {
     transform: 'rotate(0deg)',
@@ -42,10 +46,6 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
-  new:{
-      width:"100%",
-      height:"100%",
-  },
   progress: {
     width: '100%',
     '& > * + *': {
@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   cardHead:{
-      height: "60%"
+      height: 122,
   },
 
 }));
@@ -70,7 +70,16 @@ export default function RecipeReviewCard() {
 
   return (
     <div>
-    <Title>진행중인 공연</Title>
+    <Typography style={{  fontFamily: 'NotoSansCJKkr',
+                                  fontSize: 20,
+                                  fontWeight: 550,
+                                  fontStretch: 'normal',
+                                  fontStyle: 'normal',
+                                  lineHeight: 'normal',
+                                  letterSpacing: 'normal',
+                                  color: '#232426',
+            marginLeft:20}}
+            >종료된 공연</Typography>
     <div className={classes.items}>
 
     <Card className={classes.root}>
@@ -81,41 +90,10 @@ export default function RecipeReviewCard() {
                 <MoreVertIcon />
             </IconButton>
             }
-            title="기억극장"
-            subheader="콘서트"
+            title="여수엑스포"
+            subheader="외부행사"
         />
-        <Divider/>
-        <CardContent className={classes.progress}>
-            <Typography color="primary">{`${15}%`}</Typography>
-            <LinearProgress variant="determinate" value={15} />
-        </CardContent>
         </Card>
-
-        <Card className={classes.root}>
-        <CardHeader
-            className={classes.cardHead}
-            action={
-            <IconButton aria-label="settings">
-                <MoreVertIcon />
-            </IconButton>
-            }
-            title="플라잉"
-            subheader="뮤지컬"
-        />
-        <Divider/>
-        <CardContent className={classes.progress}>
-            <Typography color="primary">{`${completed}%`}</Typography>
-            <LinearProgress variant="determinate" value={completed} />
-        </CardContent>
-        </Card>
-
-        <Card className={classes.root}>
-            <ButtonBase className={classes.new}>
-                <AddIcon />
-                새로운 공연
-            </ButtonBase>
-        </Card>
-
     </div>
 
     </div>
