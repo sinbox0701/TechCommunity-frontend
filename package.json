@@ -19,12 +19,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "reactjs-popup": "^1.5.0",
-<<<<<<< HEAD
     "recharts": "^1.8.5",
     "yarn": "^1.22.4"
-=======
-    "recharts": "^1.8.5"
->>>>>>> 816da9995f2db1dc938406fb740ec65cfdc9d571
   },
   "scripts": {
     "start": "react-scripts start",
