@@ -1,7 +1,6 @@
 import React from 'react';
-<<<<<<< HEAD
 import { Route } from 'react-router-dom';
-=======
+
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -21,7 +20,7 @@ import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
->>>>>>> 816da9995f2db1dc938406fb740ec65cfdc9d571
+
 
 import Login from './page/beforeLogin';
 import Home from './page/home';
