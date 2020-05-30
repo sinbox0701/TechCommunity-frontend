@@ -15,7 +15,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AddIcon from '@material-ui/icons/Add';
 
 import Title from './Title';
-import { Divider } from '@material-ui/core';
+import { Divider,Box } from '@material-ui/core';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -71,7 +71,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   cardHead:{
-      height: 122,
+      width:280,
+      height: 88,
   },
 
   menuItem:{
@@ -80,7 +81,10 @@ const useStyles = makeStyles((theme) => ({
     padding: '5px'
   },
   icon:{
-        float:"right"
+    float:"right",
+    width:28,
+    height:28,
+    marginLeft:6,
   }
 
 }));
@@ -189,9 +193,41 @@ return (
                         performance.map(p => {
                             return (
                                 <Card className={classes.root} key={p.id}>
-                                    <IconButton aria-label="settings" className={classes.icon} id={p.id} onClick={delClick} >
-                                        <DeleteIcon />
-                                    </IconButton>
+                                    <Box style={{ display:"flex", flexDirection:'row', alignItems:'center', width:'100%', height:33}}>
+                                      <Box style={{ display:"flex", flexDirection:'row', alignItems:'center', borderRadius: 3, backgroundColor: '#f7f8fa', width:50, height:24, marginLeft:16 }}>
+                                        <Typography align= 'center' style={{
+                                                            width:50, height:24,
+                                                            fontFamily: 'NotoSansCJKkr',
+                                                            fontSize: 12,
+                                                            fontWeight: 500,
+                                                            fontStretch: 'normal',
+                                                            fontStyle: 'normal',
+                                                            lineHeight: 1.67,
+                                                            letterSpacing: 'normal',
+                                                            color: '#6a6d74',
+                                        }}>
+                                          장르
+                                        </Typography>  
+                                      </Box>
+                                      <Box style={{ display:"flex", flexDirection:'row', alignItems:'center', borderRadius: 3, width:82, height:24, marginLeft:100 }}>
+                                        <Typography align='right' style={{  
+                                                              width:82, height:24,
+                                                              fontFamily: 'NotoSansCJKkr',
+                                                              fontSize: 12,
+                                                              fontWeight: 500,
+                                                              fontStretch: 'normal',
+                                                              fontStyle: 'normal',
+                                                              lineHeight: 1.67,
+                                                              letterSpacing: 'normal',
+                                                              color: '#6a6d74',
+                                          }}>
+                                        {` 명 참여중`}
+                                        </Typography>  
+                                      </Box>
+                                      <IconButton aria-label="settings" className={classes.icon} id={p.id} onClick={delClick} >
+                                          <DeleteIcon />
+                                      </IconButton>
+                                    </Box>
                                     <ButtonBase href={`/perf/=?${p.id}`}>
                                       <CardHeader
                                           className={classes.cardHead}
@@ -200,7 +236,6 @@ return (
                                       />  
                                     </ButtonBase>
                                     
-
                                     <Divider />
                                     <CardContent className={classes.progress}>
                                         <Typography color="primary">{`${15}%`}</Typography>

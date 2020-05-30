@@ -3,11 +3,16 @@ import { BrowserRouter as Router,Route,Switch } from "react-router-dom";
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { ListItem,CssBaseline,Drawer,Box,AppBar,Toolbar,List,Typography,Divider,IconButton,Badge,Link,Avatar,Chip} from '@material-ui/core';
+import { ButtonBase, Grid, ListItem,CssBaseline,Drawer,Box,AppBar,Toolbar,List,Typography,Divider,IconButton,Badge,Link,Avatar,Chip} from '@material-ui/core';
 
 import Process from './Landing/taskList';
 import Context from './Landing/context';
 import Main from './Landing/side/main';
+import Files from './Landing/side/files';
+import Members from './Landing/side/members';
+import Temlpate from './Landing/side/template';
+import Grabage from './Landing/side/garbage';
+
 
 import ReplayIcon from '@material-ui/icons/Replay';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -45,6 +50,13 @@ const styles = makeStyles(theme => ({
     minWidth: 1340,
     minHeight: 1,
   },
+
+  drawer: {
+    backgroundColor:"#fbfcfe",
+    flexGrow: 1,
+    width:1080,
+  },
+  
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
     backgroundColor: "#ffffff",
@@ -86,6 +98,7 @@ const styles = makeStyles(theme => ({
   menuButtonHidden: {
     display: 'none',
   },
+
   title: {
     flexGrow: 1,
     color : "#232426",
@@ -109,10 +122,7 @@ const styles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
-    },
+    width: theme.spacing(9)
   },
   appBarSpacer: theme.mixins.toolbar,
 
@@ -161,7 +171,9 @@ const styles = makeStyles(theme => ({
     backgroundColor:"#ffffff",
     color:"#6a6d74",
     boxShadow: "0 2px 14px -6px #a4a9b3"
-  }
+  },
+  drawerSideColse:{height:'calc(100% - 64px)', top:65, left: drawerWidth ,overflow:"visible"},
+  drawerSideColse:{height:'calc(100% - 64px)', top:65, left: theme.spacing(9) ,overflow:"visible"},
 }));
 
 export default function App() {
@@ -170,15 +182,22 @@ export default function App() {
   const [open, setOpen] = React.useState(false);
   const [tasks,setTasks] = React.useState([]);
   
+  const [sideopen, setSideopen] = React.useState(false);
+  const [sidewidth, setSidewidth] = React.useState(72)
+
   const [title, setTitle] = React.useState("");
   const [category, setCategory] = React.useState([]);
-
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+  
+  const handleSelectSide = (event,s) => {
+    console.log(event)
+    setSideopen(true);
   };
   
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
@@ -192,6 +211,24 @@ export default function App() {
           setTasks(data);
       })
   },[]);
+
+  React.useEffect(()=>{
+    console.log(sidewidth)
+    if(open === true){
+      setSidewidth(160)
+    }
+    else{
+      setSidewidth(72)
+    }
+  },[open]);
+
+  const toggleDrawer = (s) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    console.log(s);
+    setSideopen(s);
+  };
 
   return (
     <React.Fragment>
@@ -256,7 +293,7 @@ export default function App() {
             </IconButton>
           </div>
           <Divider />
-          <List style={{marginTop:45}}>
+          <List style={{marginTop:5}}>
             <ListItem button component="a" href="/home"> 
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
@@ -265,7 +302,7 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="처음으로" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a" href="/home/members"> 
+            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,0)} style={{marginTop:40}} > 
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <PeopleAltTwoToneIcon />
@@ -273,7 +310,7 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="팀 관리" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a" href="/home/files">
+            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,1)} >
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <FolderOpenRoundedIcon/>
@@ -282,14 +319,14 @@ export default function App() {
               <ListItemText primary="자료실" style={{color:'#6a6d74'}}/>
             </ListItem>
             <ListItem button>
-              <ListItemIcon component="a" href="/home/template">
+              <ListItemIcon component="a" onClick={ (event) => handleSelectSide(event,2)} >
                 <Avatar className={classes.menuIcon}>
                   <LayersIcon/>
                 </Avatar>
               </ListItemIcon>
               <ListItemText primary="템플릿" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a" href="/home/garbage">
+            <ListItem button component="a"  onClick={ (event) => handleSelectSide(event,3)} >
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <DeleteForeverIcon/>
@@ -300,13 +337,70 @@ export default function App() {
           </List>
         </Drawer>
         
+        <Drawer variant="temporary" anchor={"left"} open={sideopen} onClose={toggleDrawer(false)}
+        elevation={5}
+        PaperProps={{ style: { position: "absolute", overflow:"hidden"}}}
+        BackdropProps={{ style: { position: "absolute"}}}
+        style={{height:'calc(100% - 64px)', top:65, left: sidewidth ,overflow:"visible"}}
+        >
+          
+            <Box className={classes.drawer}>
+                <Grid container>
+
+                    <Grid item xs={12}>
+                        <Box style={{  borderBottom:'solid 1px #e3e7f0',backgroundColor: '#ffffff',
+                            width:1080, height:56}}>
+                                <Box>
+                                    
+                                </Box>
+                        </Box>
+                    </Grid>
+
+                    <Grid item xs={8}>
+                        <Box style={{ borderBottom:'solid 1px #e3e7f0', 
+                            borderRight:'solid 1px #e3e7f0', 
+                            backgroundColor: '#ffffff'
+                            , minHeight:192}}>
+                            
+                        </Box>
+                        <Box style={{ display: 'flex',flexDirection: 'row', alignItems: 'start',justifyContent: 'flex-start',}}>
+                            <Box  style={{ borderBottom:'solid 1px #e3e7f0', 
+                                      backgroundColor: '#fbfcfe'
+                                    , width:158,minHeight:192}}>
+                            </Box>
+                            <Box style={{ borderBottom:'solid 1px #e3e7f0',
+                            borderLeft:'solid 1px #e3e7f0',
+                            borderRight:'solid 1px #e3e7f0', backgroundColor: '#ffffff'
+                                    , width:652,minHeight:800, overflow:"auto"}}>
+                            </Box>
+                        </Box>
+                    </Grid>
+                    
+                    <Grid item xs={4}>
+                        <Box style={{borderBottom:'solid 1px #e3e7f0', 
+                            borderRight:'solid 1px #e3e7f0', backgroundColor: '#ffffff'
+                            ,height:48}}>
+                            
+                        </Box>
+                        <Box style={{  height:'auto'}}>
+                            
+                        </Box>
+                        <Box style={{  backgroundColor: '#ffffff',
+                            borderTop:'solid 1px #e3e7f0', 
+                            borderBottom:'solid 1px #e3e7f0', 
+                            position: 'absolute', width:360, height:100, right:0,bottom:0}}>
+                        </Box>
+                    </Grid>
+                </Grid>
+            </Box>
+          </Drawer>
+
         <Box className={classes.content}>
           <div className={classes.appBarSpacer}/>
           <div>
           <Router>
             <Switch>
               <Route path={"/perf"} component={Process}/> 
-              <Route path={`/perf/=?${perfNum}`} component={Process}/>
             </Switch>
           </Router>
           </div>

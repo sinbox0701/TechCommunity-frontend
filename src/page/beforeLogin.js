@@ -18,17 +18,17 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     loginBox:{
-        marginTop:100,
-        marginBottom:100,
-        marginLeft:180,
+        marginTop:"8%",
+        marginBottom:"8%",
+        marginLeft:"20%",
         maxWidth: 360,
-        height: 491
+        height: "80%"
     },
     bgimgBox: {
-        marginTop:100,
-        marginBottom:100,
+        marginTop:"8%",
+        marginBottom:"8%",
         width: 585,
-        height: 491
+        height: "80%"
     },
     img: {
         width:"100%",
