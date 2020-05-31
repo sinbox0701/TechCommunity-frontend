@@ -96,7 +96,6 @@ const styles = makeStyles(theme => ({
   },
   drawerPaper: {
     backgroundColor: '#f7f8fa',
-    height: "100%",
     position: 'relative',
     whiteSpace: 'nowrap',
     width: drawerWidth,
@@ -120,16 +119,17 @@ const styles = makeStyles(theme => ({
   appBarSpacer: theme.mixins.toolbar,
 
   content: {
-    height:"1024",
+    width:window.innerWidth+'px',
+    height:'100%',
     flexGrow: 1,
-    overflow: 'auto',
+    overflow: 'hidden',
     backgroundColor: "#ffffff"
   },
 
   container: {
     marginTop:150,
-    width:"auto",
-    overflow: 'auto',
+    width:"100%",
+    overflow: 'hidden',
   },
   
   paper: {
@@ -137,7 +137,7 @@ const styles = makeStyles(theme => ({
     paddingLeft: theme.spacing(6),
     paddingRight: theme.spacing(6),
     display: 'flex',
-    overflow: 'auto',
+    overflow: 'hidden',
     flexDirection: 'column',
   },
 
@@ -228,10 +228,10 @@ export default function App() {
           <Router>
             <Switch>
               <Route exact path="/home" component={Main}/>
-              <Route path="/home/members" component={Members}/>
-              <Route path="/home/files" component={Files}/>
-              <Route path="/home/template" component={Temlpate}/>
-              <Route path="/home/garbage" component={Grabage}/>
+              <Route path="/perf/members" component={Members}/>
+              <Route path="/perf/files" component={Files}/>
+              <Route path="/perf/template" component={Temlpate}/>
+              <Route path="/perf/garbage" component={Grabage}/>
             </Switch>
           </Router>
           </div>

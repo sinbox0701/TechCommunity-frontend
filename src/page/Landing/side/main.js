@@ -25,15 +25,17 @@ const styles = makeStyles((theme) => ({
     },
   },
   content: {
-    height:"1024",
+    width:window.innerWidth+'px',
+    minHeight:"1024",
     flexGrow: 1,
-    overflow: 'auto',
+    overflowX: 'hidden',
     backgroundColor: "#ffffff"
   },
 
   container: {
-    width:"auto",
-    overflow: 'auto',
+    
+    width:'100%',
+    overflow: 'hidden',
   },
 
   paper: {
@@ -46,6 +48,8 @@ const styles = makeStyles((theme) => ({
   },
 
   sidepaper: {
+    position:"absolute",
+    right:0,
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: '#fbfcfe'
@@ -61,7 +65,6 @@ const styles = makeStyles((theme) => ({
     height: 300,
   },
   new:{
-    width:420,
     height:180,
   },
   menuIcon:{
@@ -99,8 +102,8 @@ export default function main(props) {
             {/* calendar */}
             <Grid item xs={3}>
               <Box className={classes.sidepaper} style={ {  border : '1px solid #e0e4ee' }}>
-                <Calendar style={{width:420, height:180}}/> 
-                <Box style={ {  width:420, height:180 }}>
+                <Calendar style={{height:180}}/> 
+                <Box style={{ height:180 }}>
                   <Typography>
                     다가오는 일정
                   </Typography>
@@ -111,28 +114,28 @@ export default function main(props) {
                     일정1
                   </Typography>  
                 </Box> 
-                
+                <Box style={{height:60}}>
+                  <Typography align="center" style={{
+                      fontFamily: 'NotoSansCJKkr',
+                      fontSize: 20,
+                      fontWeight: 550,
+                      fontStretch: 'normal',
+                      fontStyle: 'normal',
+                      lineHeight: 'normal',
+                      letterSpacing: 'normal',
+                      color: '#232426',
+                      height: 60, border : '1px solid #e0e4ee', paddingTop:16 } }>
+                    메모
+                  </Typography>
+                </Box>
+                <Box style={ { display:'flex', alignItems:'center',justifyItems:'center', height:180, border : '1px solid #e0e4ee' } }>
+                  <ButtonBase className={classes.new} >
+                    <AddIcon />
+                      메모 추가
+                  </ButtonBase>
+                </Box>
               </Box>
-              <Box style={{height:60}}>
-                <Typography align="center" style={{
-                    fontFamily: 'NotoSansCJKkr',
-                    fontSize: 20,
-                    fontWeight: 550,
-                    fontStretch: 'normal',
-                    fontStyle: 'normal',
-                    lineHeight: 'normal',
-                    letterSpacing: 'normal',
-                    color: '#232426',
-                    height: 60, border : '1px solid #e0e4ee', paddingTop:16 } }>
-                  메모
-                </Typography>
-              </Box>
-              <Box style={ { width:420, height:180,border : '1px solid #e0e4ee' } }>
-                <ButtonBase className={classes.new} >
-                  <AddIcon />
-                  메모 추가
-                </ButtonBase>
-              </Box>
+              
             </Grid>
           </Grid>
         </Box>
