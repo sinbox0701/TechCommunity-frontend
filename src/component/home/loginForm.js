@@ -4,6 +4,7 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { makeStyles } from '@material-ui/core/styles';
 
 import LOGO from '../../assets/logo@3x.png'
+import CSRFToken from "../csrftoken";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -52,6 +53,37 @@ const useStyles = makeStyles((theme) => ({
 
 export default function App() {
   const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+  const [inputs, setInputs] = React.useState({
+      username:"",
+      password:""
+  });
+  const {username,password} = inputs;
+
+  const onChange = (e) =>{
+      const {name,value} = e.target;
+      setInputs({
+          ...inputs,
+          [name]:value
+      });
+  };
+   const onSubmit = (e) =>{
+      e.preventDefault();
+       const post = {
+           username:username,
+           password:password
+    };
+    console.log(post);
+    fetch('http://127.0.0.1:8000/Tech/login/',{
+         method: "POST",
+         headers:{
+             'content-type' : 'application/json'
+         },
+         body: JSON.stringify(post)
+     }).then(res => res.json).then(data => console.log(data));
+    //setOpen(false);
+  };
+
 
   return (
     <div className={classes.root}>
@@ -62,20 +94,37 @@ export default function App() {
         </Box>
 
         <Box style={{display: 'flex',flexDirection: 'column',alignItems: 'center',}}>
-            <TextField variant="outlined" style={{fontSize:20,marginTop:28,backgroundColor:"#ffffff", width:320, height:44}}>
+            <CSRFToken/>
+            <TextField
+                variant="outlined"
+                style={{fontSize:20,marginTop:28,backgroundColor:"#ffffff", width:320, height:44}}
+                name="username"
+                value={username}
+                onChange={onChange}
+            >
                 
             </TextField>
-            <TextField variant="outlined" style={{fontSize:20,marginTop:28,backgroundColor:"#ffffff", width:320, height:44}}>
+            <CSRFToken/>
+            <TextField
+                variant="outlined"
+                style={{fontSize:20,marginTop:28,backgroundColor:"#ffffff", width:320, height:44}}
+                name="password"
+                value={password}
+                onChange={onChange}
+            >
                 
             </TextField>
         </Box>
 
         <Box style={{display: 'flex',flexDirection: 'column',alignItems: 'center',}}>
-            <ButtonBase style={{marginTop:12, backcolor:"a4a9b3", width:320, height:44}}>
+            <form onSubmit={onSubmit}>
+                <CSRFToken/>
+            <ButtonBase style={{marginTop:12, backcolor:"a4a9b3", width:320, height:44}} type='submit'>
               <Typography>
                 로그인
               </Typography>
             </ButtonBase>
+            </form>
             <Typography style={{marginTop:12}}>또는</Typography>
             <ButtonBase style={{marginTop:12,marginBottom:16,color:"a4a9b3", width:320, height:44}}>
               <Typography>
