@@ -42,7 +42,7 @@ function Copyright() {
   );
 }
 
-const drawerWidth = 160;
+const drawerWidth = 180;
 
 const styles = makeStyles(theme => ({
   root: {
@@ -54,7 +54,7 @@ const styles = makeStyles(theme => ({
   drawer: {
     backgroundColor:"#fbfcfe",
     flexGrow: 1,
-    width:1080,
+    width:540,
   },
   
   toolbar: {
@@ -188,6 +188,8 @@ export default function App() {
   const [title, setTitle] = React.useState("");
   const [category, setCategory] = React.useState([]);
 
+  const [sidetitle, setSidetitle] = React.useState("");
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -195,8 +197,9 @@ export default function App() {
     setOpen(false);
   };
   
-  const handleSelectSide = (event,s) => {
+  const handleSelectSide = (event,s,stitle) => {
     console.log(event)
+    setSidetitle(stitle)
     setSideopen(true);
   };
   
@@ -215,7 +218,7 @@ export default function App() {
   React.useEffect(()=>{
     console.log(sidewidth)
     if(open === true){
-      setSidewidth(160)
+      setSidewidth(180)
     }
     else{
       setSidewidth(72)
@@ -302,37 +305,37 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="처음으로" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,0)} style={{marginTop:40}} > 
+            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,0,"Team")} style={{marginTop:40}} > 
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <PeopleAltTwoToneIcon />
                 </Avatar>
               </ListItemIcon>
-              <ListItemText primary="팀 관리" style={{color:'#6a6d74'}}/>
+              <ListItemText primary="Team" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,1)} >
+            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,1,"Files")} >
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <FolderOpenRoundedIcon/>
                 </Avatar>
               </ListItemIcon>
-              <ListItemText primary="자료실" style={{color:'#6a6d74'}}/>
+              <ListItemText primary="Files" style={{color:'#6a6d74'}}/>
             </ListItem>
             <ListItem button>
-              <ListItemIcon component="a" onClick={ (event) => handleSelectSide(event,2)} >
+              <ListItemIcon component="a" onClick={ (event) => handleSelectSide(event,2,"Template" )} >
                 <Avatar className={classes.menuIcon}>
                   <LayersIcon/>
                 </Avatar>
               </ListItemIcon>
-              <ListItemText primary="템플릿" style={{color:'#6a6d74'}}/>
+              <ListItemText primary="Template" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a"  onClick={ (event) => handleSelectSide(event,3)} >
+            <ListItem button component="a"  onClick={ (event) => handleSelectSide(event,3,"Recycle Bin")} >
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <DeleteForeverIcon/>
                 </Avatar>
               </ListItemIcon>
-              <ListItemText primary="휴지통" style={{color:'#6a6d74'}}/>
+              <ListItemText primary="Recycle Bin" style={{color:'#6a6d74'}}/>
             </ListItem>
           </List>
         </Drawer>
@@ -343,40 +346,27 @@ export default function App() {
         BackdropProps={{ style: { position: "absolute"}}}
         style={{height:'calc(100% - 64px)', top:65, left: sidewidth ,overflow:"visible"}}
         >
-          
             <Box className={classes.drawer}>
                 <Grid container>
-
-                    <Grid item xs={12}>
+                    <Grid>
                         <Box style={{  borderBottom:'solid 1px #e3e7f0',backgroundColor: '#ffffff',
                             width:1080, height:56}}>
                                 <Box>
-                                    
+                                    <Typography style={{  fontSize:25,  
+                                                          fontWeight: 'bold',
+                                                          fontStretch: 'normal',
+                                                          fontStyle: 'normal',
+                                                          lineHeight: 'normal',
+                                                          letterSpacing: 0,
+                                                          color: "#6a6d74", 
+                                        marginLeft:20, marginTop:20 ,display: 'flex',flexDirection: 'row', alignItems: 'center'}}>
+                                        {sidetitle} 
+                                    </Typography>
                                 </Box>
                         </Box>
                     </Grid>
-
-                    <Grid item xs={8}>
-                        <Box style={{ borderBottom:'solid 1px #e3e7f0', 
-                            borderRight:'solid 1px #e3e7f0', 
-                            backgroundColor: '#ffffff'
-                            , minHeight:192}}>
-                            
-                        </Box>
-                        <Box style={{ display: 'flex',flexDirection: 'row', alignItems: 'start',justifyContent: 'flex-start',}}>
-                            <Box  style={{ borderBottom:'solid 1px #e3e7f0', 
-                                      backgroundColor: '#fbfcfe'
-                                    , width:158,minHeight:192}}>
-                            </Box>
-                            <Box style={{ borderBottom:'solid 1px #e3e7f0',
-                            borderLeft:'solid 1px #e3e7f0',
-                            borderRight:'solid 1px #e3e7f0', backgroundColor: '#ffffff'
-                                    , width:652,minHeight:800, overflow:"auto"}}>
-                            </Box>
-                        </Box>
-                    </Grid>
                     
-                    <Grid item xs={4}>
+                    <Grid>
                         <Box style={{borderBottom:'solid 1px #e3e7f0', 
                             borderRight:'solid 1px #e3e7f0', backgroundColor: '#ffffff'
                             ,height:48}}>
@@ -388,7 +378,7 @@ export default function App() {
                         <Box style={{  backgroundColor: '#ffffff',
                             borderTop:'solid 1px #e3e7f0', 
                             borderBottom:'solid 1px #e3e7f0', 
-                            position: 'absolute', width:360, height:100, right:0,bottom:0}}>
+                            position: 'absolute', width:540, height:100, right:0,bottom:0}}>
                         </Box>
                     </Grid>
                 </Grid>

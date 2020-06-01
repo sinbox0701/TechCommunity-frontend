@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
 export default function RecipeReviewCard() {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
-  const [completed, setCompleted] = React.useState(74);
+  const [completed, setCompleted] = React.useState(0);
   const [performance, setPerformance] = React.useState([]);
   const [value, setValue] = React.useState([]);
   const [open, setOpen] = React.useState(false);
@@ -238,8 +238,8 @@ return (
                                     
                                     <Divider />
                                     <CardContent className={classes.progress}>
-                                        <Typography color="primary">{`${15}%`}</Typography>
-                                        <LinearProgress variant="determinate" value={15} />
+                                        <Typography color="primary">{`${0}%`}</Typography>
+                                        <LinearProgress variant="determinate" value={0} />
                                     </CardContent>
                                 </Card>
                             );
