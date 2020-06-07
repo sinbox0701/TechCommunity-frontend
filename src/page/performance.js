@@ -47,8 +47,10 @@ const drawerWidth = 180;
 const styles = makeStyles(theme => ({
   root: {
     display: 'flex',
-    minWidth: 1340,
+    maxWidth: window.innerWidth ,
     minHeight: 1,
+    maxHeight: window.innerHeight ,
+    overflow: "hidden",
   },
 
   drawer: {
@@ -321,8 +323,8 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="Files" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button>
-              <ListItemIcon component="a" onClick={ (event) => handleSelectSide(event,2,"Template" )} >
+            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,2,"Template" )} >
+              <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <LayersIcon/>
                 </Avatar>
