@@ -553,7 +553,6 @@ export default function FullScreenDialog(props) {
                                                                                                         }}
                                                                                                         >
                                                                                                             <AttachFileSharpIcon style={{color: "#6a6d74"}}/>
-                                                                                                            
                                                                                                         </ButtonBase>
                                                                                                     </Box>
                                                                                                     

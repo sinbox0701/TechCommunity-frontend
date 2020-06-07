@@ -129,6 +129,7 @@ dmypy.json
 .idea/**/dictionaries
 .idea/**/shelf
 
+
 # Generated files
 .idea/**/contentModel.xml
 
@@ -220,5 +221,7 @@ bower_components
 psd
 thumb
 sketch
+
+
 
 # End of https://www.gitignore.io/api/react,django,pycharm
