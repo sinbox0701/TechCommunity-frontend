@@ -4,7 +4,7 @@ import { BrowserRouter as Router,Route,Switch } from "react-router-dom";
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { ListItem,CssBaseline,Drawer,Box,AppBar,Toolbar,List,Typography,Divider,IconButton,Badge,Link,Avatar,Chip} from '@material-ui/core';
-
+import ButtonBase from '@material-ui/core/ButtonBase';
 import Files from './Landing/side/files';
 import Members from './Landing/side/members';
 import Temlpate from './Landing/side/template';
@@ -23,6 +23,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 function Copyright() {
   return (
@@ -170,13 +171,25 @@ const styles = makeStyles(theme => ({
 export default function App() {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
+  const [state, setState] = React.useState({
+      displayed_form: '',
+      logged_in: localStorage.getItem('token') ? true : false,
+      username: ''
+    });
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  
+
+   const handle_logout = () => {
+    localStorage.removeItem('token');
+    setState({ logged_in: false, username: '' });
+
+  };
+
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const fixedHeightSidePaper = clsx(classes.sidepaper, classes.fixedHeight);
 
@@ -199,6 +212,13 @@ export default function App() {
               </Badge>
             </IconButton>
 
+            <ButtonBase href={'/'}>
+            <IconButton onClick={handle_logout}>
+                <Avatar className={classes.menuIcon}>
+                  <ExitToAppIcon />
+                </Avatar>
+            </IconButton>
+            </ButtonBase>
             <Divider variant="middle" orientation="vertical" flexItem />
 
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />

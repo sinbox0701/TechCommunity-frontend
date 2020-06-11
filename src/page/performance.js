@@ -209,7 +209,12 @@ export default function App() {
   const fixedHeightSidePaper = clsx(classes.sidepaper, classes.fixedHeight);
 
   React.useEffect(()=>{
-    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}`)
+    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}`,{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
       .then(response => response.json())
       .then(data => {
           setTitle(data[0].title);

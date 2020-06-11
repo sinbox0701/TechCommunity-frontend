@@ -3,7 +3,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {Typography, Link, ButtonBase, Box} from '@material-ui/core';
 
-import LoginForm from '../component/home/loginForm'
+import LoginForm from '../component/home/LoginForm'
 
 import BGIMG from '../assets/login-bg.svg';
 
@@ -55,12 +55,51 @@ function Copyright() {
 }
 
 export default function App() {
+    const  [state, setState] = React.useState({
+    logged_in: localStorage.getItem('token') ? true : false,
+    username: '',
+    password: ''
+  });
+    React.useEffect(()=>{
+        if (state.logged_in) {
+            fetch('http://localhost:8000/Tech/current_user/', {
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            }).then(res => res.json()).then(json => {
+            setState({ username: json.username });
+            });
+        }
+    });
+    const handle_login = (e, data) => {
+    e.preventDefault();
+     fetch('http://localhost:8000/api-token-auth/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(res => res.json())
+      .then(json => {
+          console.log(json.user)
+
+        localStorage.setItem('token', json.token);
+        setState({
+          logged_in: true,
+          displayed_form: '',
+          username: json.user.username
+        });
+      });
+  };
+
   const classes = useStyles();
+  const form = <LoginForm handle_login={handle_login}/>;
   return (
         <React.Fragment>
             <div className={classes.root}>
                 <Box className= {classes.loginBox}>
-                    <LoginForm/> 
+                    {form}
                 </Box>
                 <Box className= {classes.bgimgBox}>
                     <img src={BGIMG} alt={"logo"}/> 

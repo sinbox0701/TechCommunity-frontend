@@ -28,6 +28,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 
 
 import axios from 'axios';
+import JWToken from "../JWToken";
 
 const useStyles = makeStyles((theme) => ({
     items: {
@@ -112,7 +113,8 @@ export default function RecipeReviewCard() {
     fetch(`http://127.0.0.1:8000/Tech/delete/${id}`,{
         method:'DELETE',
         headers:{
-             'content-type' : 'application/json'
+             'content-type' : 'application/json',
+            Authorization: `JWT ${localStorage.getItem('token')}`
          },
     }).then(res => res.json).then(data => console.log(data));
     console.log(`hi ${id}`)
@@ -150,7 +152,8 @@ export default function RecipeReviewCard() {
     fetch('http://127.0.0.1:8000/Tech/add/',{
          method: "POST",
          headers:{
-             'content-type' : 'application/json'
+             'content-type' : 'application/json',
+             Authorization: `JWT ${localStorage.getItem('token')}`
          },
          body: JSON.stringify(post)
      }).then(res => res.json).then(data => console.log(data));
@@ -158,7 +161,14 @@ export default function RecipeReviewCard() {
   };
 
   React.useEffect(()=>{
-     fetch('http://127.0.0.1:8000/Tech/')
+     //console.log(JWToken)
+      //console.log('zs')
+     fetch('http://127.0.0.1:8000/Tech/',{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
          .then(response => response.json())
          .then(data => {
              console.log(data);
