@@ -248,7 +248,8 @@ export default function FullScreenDialog(props) {
     method: 'PUT',
     data: data,
     headers: {
-        'Content-Type': contentType
+        'Content-Type': contentType,
+        Authorization: `JWT ${localStorage.getItem('token')}`
     }
     }).then((response) => {
     setResponse(response.data);
@@ -295,7 +296,12 @@ export default function FullScreenDialog(props) {
 
   React.useEffect(()=>{
     const TN = [];
-    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}`)
+    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}`,{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
       .then(response => response.json())
       .then(data => {
           console.log(data)
@@ -314,7 +320,12 @@ export default function FullScreenDialog(props) {
     if(select !== 0){
         if(select !== 3){
             
-            fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}`)
+            fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}`,{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
             .then(response => response.json())
             .then(data => {
                 console.log(data)
@@ -338,7 +349,12 @@ export default function FullScreenDialog(props) {
     const temp=[]
     if(select !== 0){
         if(select !== 3){
-            fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}`)
+            fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}`,{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
             .then(response => response.json())
             .then(data => {
                 console.log(data)
