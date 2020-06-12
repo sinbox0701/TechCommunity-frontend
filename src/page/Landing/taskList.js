@@ -1,5 +1,10 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {
+    fade,
+    ThemeProvider,
+    withStyles,
+    makeStyles,
+    createMuiTheme, } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -11,7 +16,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Slide from '@material-ui/core/Slide';
-import {Input, InputBase, Box, ButtonBase, Drawer, Grid, TextField} from '@material-ui/core';
+import {Input, InputBase, Box, ButtonBase, Drawer, Grid, TextField, InputLabel, FormControl} from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import axios from 'axios';
 
@@ -31,6 +36,84 @@ import AttachFileSharpIcon from '@material-ui/icons/AttachFileSharp';
 import AddSharpIcon from '@material-ui/icons/AddSharp';
 
 import TaskInfo from '../../component/task/taskInfo';
+
+const CssTextField = withStyles({
+  root: {
+    '& label.Mui-focused': {
+      color: 'green',
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: 'green',
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'red',
+      },
+      '&:hover fieldset': {
+        borderColor: 'yellow',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'green',
+      },
+    },
+  },
+})(TextField);
+
+const BootstrapInput = withStyles((theme) => ({
+  root: {
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: 'relative',
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid #ced4da',
+    fontSize: 16,
+    width: 'auto',
+    padding: '10px 12px',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    '&:focus': {
+      boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
+      borderColor: theme.palette.primary.main,
+    },
+  },
+}))(InputBase);
+
+const useStylesReddit = makeStyles((theme) => ({
+  root: {
+    border: '1px solid #e2e2e1',
+    overflow: 'hidden',
+    borderRadius: 4,
+    backgroundColor: '#fcfcfb',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    '&:hover': {
+      backgroundColor: '#fff',
+    },
+    '&$focused': {
+      backgroundColor: '#fff',
+      boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
+      borderColor: theme.palette.primary.main,
+    },
+  },
+  focused: {},
+}));
+
+
 
 TabPanel.propTypes = {
     children: PropTypes.node,
@@ -119,9 +202,33 @@ const useStyles = makeStyles((theme) => ({
       },
 }));
 
+function RedditTextField(props) {
+  const classes = useStylesReddit();
+
+  return <TextField InputProps={{ classes, disableUnderline: true }} {...props} />;
+}
+
+const ValidationTextField = withStyles({
+  root: {
+    '& input:valid + fieldset': {
+      borderWidth: 2,
+    },
+    '& input:invalid + fieldset': {
+      borderColor: 'red',
+      borderWidth: 2,
+    },
+    '& input:valid:focus + fieldset': {
+      borderLeftWidth: 6,
+      padding: '4px !important', // override inline-style
+    },
+  },
+})(TextField);
+
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
+
 
 export default function FullScreenDialog(props) {
   const classes = useStyles();
@@ -140,7 +247,9 @@ export default function FullScreenDialog(props) {
   const [tname,setTName] = React.useState([]);
 
   const [contents,setContents] = React.useState([]);
-  
+  const [comments,setComments] = React.useState([]);
+  const [logs,setLogs] = React.useState([]);
+
   const [clist,setClist] = React.useState([]);
   const [tlist,setTlist] = React.useState([]);
   const [cclist,setCclist] = React.useState([]);
@@ -154,7 +263,10 @@ export default function FullScreenDialog(props) {
   const [file, setFile] =  React.useState(null);
   const [desc, setDesc] =  React.useState("");
 
-
+  const [inputs,setInputs] = React.useState({
+      text:""
+  });
+  const {text} = inputs;
   const [state, setState] = React.useState(false);
   const [textfeild, setTextfeild] = React.useState(
     {
@@ -188,7 +300,27 @@ export default function FullScreenDialog(props) {
       setFileUploadState(e.target.value);
       setFile(e.target.files[0])
   }
-
+  const onChange = (e) =>{
+      const {name,value} = e.target;
+      setInputs({
+          ...inputs,
+          [name]:value
+      });
+  };
+  const onSubmit = (e) =>{
+      e.preventDefault();
+       const post = {
+           text:text
+    };
+    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}/com`,{
+         method: "POST",
+         headers:{
+             'content-type' : 'application/json',
+             Authorization: `JWT ${localStorage.getItem('token')}`
+         },
+         body: JSON.stringify(post)
+     }).then(res => res.json).then(data => console.log(data));
+  };
   const handleEditClick = (event, sc, v) => {
     setSelsectCont(sc);
     setOldcont(v);
@@ -369,7 +501,9 @@ export default function FullScreenDialog(props) {
     const cnum  = [];
     const tl = [];
     const cc = [];
-    
+    const com =[];
+    const log = []
+
     if(contents !== []){
         console.log(contents)
         contents.map( c =>{
@@ -383,12 +517,18 @@ export default function FullScreenDialog(props) {
                 tl.push(c)
             }
         }
+        if(c.text !== undefined){
+            com.push(c);
+        }
+        if(c.mod !== undefined){
+            log.push(c);
+        }
         });
     }
 
     const unqcl = Array.from(new Set(cl));
     const unqcnum = Array.from(new Set(cnum));
-    
+
     console.log(cc);
     setCclist(cc);
     console.log(unqcl);
@@ -396,8 +536,12 @@ export default function FullScreenDialog(props) {
     console.log(unqcnum);
     setCNumlist(unqcnum);
 
+    console.log(com);
+    setComments(com);
     console.log(tl);
     setTlist(tl);
+    console.log(log);
+    setLogs(log);
 
   },[contents]);
 
@@ -490,7 +634,6 @@ export default function FullScreenDialog(props) {
                                                 <Box style={{backgroundColor: '#ffffff', width:280, height:88, marginBottom:12,
                                                             borderRadius: 5,
                                                             border: "solid 1px #cacfdb",
-                                                            backgroundColor: "#ffffff",
                                                             boxShadow: "0 5px 16px -5px #a4a9b3",
                                                     }}>
                                                     <ButtonBase style={{ width:280, height:44, justifyContent:"flex-start"
@@ -869,29 +1012,53 @@ export default function FullScreenDialog(props) {
                                                                             </Tabs>
                                                                         </Box>
                                                                         <Box style={{  height:'auto'}}>
-                                                                            
+
                                                                         </Box>
                                                                         <Box style={{  backgroundColor: '#fbfcfe',
                                                                             borderTop:'solid 1px #e3e7f0', 
                                                                             borderBottom:'solid 1px #e3e7f0', 
                                                                             position: 'absolute', width:354, minHeight: 340, maxHeight:340, right:17, bottom:100}}>
                                                                             {
-                                                                                logvalue==0? 
-                                                                                <Box>asd</Box>
+                                                                                logvalue==0?
+                                                                                comments.map(cm =>{
+                                                                                        return(
+                                                                                            <Box>
+                                                                                                {cm.create}
+                                                                                                {cm.username}
+                                                                                                {cm.text}
+                                                                                            </Box>
+                                                                                        );
+                                                                                        })
                                                                                 :
-                                                                                    logvalue==1?
-                                                                                    <Box>dsa</Box>
-                                                                                    :
-                                                                                    <Box>None</Box>
+                                                                                logvalue==1?
+                                                                                logs.map(lo =>{
+                                                                                    return (
+                                                                                        <Box>
+                                                                                            {lo.date}
+                                                                                            {lo.userdetail}
+                                                                                            {lo.mod}
+                                                                                        </Box>
+                                                                                    );
+                                                                                })
+                                                                                :
+                                                                                <Box>None</Box>
                                                                             }
                                                                         
                                                                         </Box>
-
+                                                                        <form onSubmit={onSubmit}>
                                                                         <Box style={{  backgroundColor: '#ffffff',
                                                                             borderTop:'solid 1px #e3e7f0', 
                                                                             borderBottom:'solid 1px #e3e7f0', 
                                                                             position: 'absolute', width:354, height:100, right:17, bottom:0}}>
-                                                                                <ButtonBase style={{    backgroundColor: '#ffffff',
+                                                                             <InputBase
+                                                                                className={classes.margin}
+                                                                                type='text'
+                                                                                name='text'
+                                                                                value={text}
+                                                                                inputProps={{ 'aria-label': 'naked' }}
+                                                                                onChange={onChange}
+                                                                             />
+                                                                                <ButtonBase type='submit' style={{
                                                                                                         borderTop:'solid 1px #e3e7f0', 
                                                                                                         borderBottom:'solid 1px #e3e7f0', 
                                                                                                         position: 'absolute', width:44, height:36, right:0, marginTop:32,marginRight:12,
@@ -911,6 +1078,7 @@ export default function FullScreenDialog(props) {
                                                                                     </Typography>
                                                                                 </ButtonBase>
                                                                         </Box>
+                                                                        </form>
                                                                     </Grid>
                                                                 </Grid>
                                                             </Box>

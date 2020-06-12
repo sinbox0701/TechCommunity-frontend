@@ -128,7 +128,7 @@ class App extends Component {
         {form}
           <BrowserRouter>
           {this.state.logged_in
-            ? <WrappedLoggedInRoutes/>
+            ? <WrappedLoggedInRoutes />
             : <WrappedLoggedOutRoutes />}
             </BrowserRouter>
            </div>
