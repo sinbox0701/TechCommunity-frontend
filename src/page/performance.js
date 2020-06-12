@@ -175,7 +175,7 @@ const styles = makeStyles(theme => ({
     boxShadow: "0 2px 14px -6px #a4a9b3"
   },
   drawerSideColse:{height:'calc(100% - 64px)', top:65, left: drawerWidth ,overflow:"visible"},
-  drawerSideColse:{height:'calc(100% - 64px)', top:65, left: theme.spacing(9) ,overflow:"visible"},
+  //drawerSideColse:{height:'calc(100% - 64px)', top:65, left: theme.spacing(9) ,overflow:"visible"},
 }));
 
 export default function App() {
@@ -189,6 +189,7 @@ export default function App() {
 
   const [title, setTitle] = React.useState("");
   const [category, setCategory] = React.useState([]);
+  const [username, setUsername] = React.useState([]);
 
   const [sidetitle, setSidetitle] = React.useState("");
 
@@ -217,11 +218,24 @@ export default function App() {
       })
       .then(response => response.json())
       .then(data => {
+        console.log(data);
+
           setTitle(data[0].title);
           setTasks(data);
       })
   },[]);
+  React.useEffect(()=>{
 
+            fetch('http://localhost:8000/Tech/current_user/', {
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            }).then(res => res.json()).then(json => {
+              console.log(json)
+              setUsername(json.username);
+            });
+
+    },[username]);
   React.useEffect(()=>{
     console.log(sidewidth)
     if(open === true){
@@ -271,7 +285,7 @@ export default function App() {
 
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             <Typography color="textSecondary" variant="button" noWrap>
-              사용자명
+              {username}
             </Typography>
         
             
