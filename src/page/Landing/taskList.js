@@ -35,84 +35,15 @@ import DateRangeOutlinedIcon from '@material-ui/icons/DateRangeOutlined';
 import AttachFileSharpIcon from '@material-ui/icons/AttachFileSharp';
 import AddSharpIcon from '@material-ui/icons/AddSharp';
 
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import BeachAccessIcon from '@material-ui/icons/BeachAccess';
+
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Select from '@material-ui/core/Select';
+
 import TaskInfo from '../../component/task/taskInfo';
-
-const CssTextField = withStyles({
-  root: {
-    '& label.Mui-focused': {
-      color: 'green',
-    },
-    '& .MuiInput-underline:after': {
-      borderBottomColor: 'green',
-    },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: 'red',
-      },
-      '&:hover fieldset': {
-        borderColor: 'yellow',
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: 'green',
-      },
-    },
-  },
-})(TextField);
-
-const BootstrapInput = withStyles((theme) => ({
-  root: {
-    'label + &': {
-      marginTop: theme.spacing(3),
-    },
-  },
-  input: {
-    borderRadius: 4,
-    position: 'relative',
-    backgroundColor: theme.palette.common.white,
-    border: '1px solid #ced4da',
-    fontSize: 16,
-    width: 'auto',
-    padding: '10px 12px',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(','),
-    '&:focus': {
-      boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-      borderColor: theme.palette.primary.main,
-    },
-  },
-}))(InputBase);
-
-const useStylesReddit = makeStyles((theme) => ({
-  root: {
-    border: '1px solid #e2e2e1',
-    overflow: 'hidden',
-    borderRadius: 4,
-    backgroundColor: '#fcfcfb',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
-    '&:hover': {
-      backgroundColor: '#fff',
-    },
-    '&$focused': {
-      backgroundColor: '#fff',
-      boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
-      borderColor: theme.palette.primary.main,
-    },
-  },
-  focused: {},
-}));
-
 
 
 TabPanel.propTypes = {
@@ -200,34 +131,30 @@ const useStyles = makeStyles((theme) => ({
         background:"#0068ff",
         color:"#0068ff"
       },
+      list: {
+            width: '100%',
+            maxWidth: 360,
+            backgroundColor: theme.palette.background.paper,
+        },
+        listDividerFullWidth: {
+            margin: `5px 0 0 ${theme.spacing(2)}px`,
+        },
+        listDividerInset: {
+            margin: `5px 0 0 ${theme.spacing(9)}px`,
+        },
+        formControl: {
+            margin: theme.spacing(1),
+            minWidth: 120,
+        },
+        selectEmpty: {
+            marginTop: theme.spacing(2),
+        },
 }));
 
-function RedditTextField(props) {
-  const classes = useStylesReddit();
-
-  return <TextField InputProps={{ classes, disableUnderline: true }} {...props} />;
-}
-
-const ValidationTextField = withStyles({
-  root: {
-    '& input:valid + fieldset': {
-      borderWidth: 2,
-    },
-    '& input:invalid + fieldset': {
-      borderColor: 'red',
-      borderWidth: 2,
-    },
-    '& input:valid:focus + fieldset': {
-      borderLeftWidth: 6,
-      padding: '4px !important', // override inline-style
-    },
-  },
-})(TextField);
 
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="left" ref={ref} {...props} />;
-});
+
+;
 
 
 export default function FullScreenDialog(props) {
@@ -282,7 +209,11 @@ export default function FullScreenDialog(props) {
         10:"",
     }
   );
+   const [status, setStatus] = React.useState('');
 
+  const handleStatus = (event) => {
+    setStatus(event.target.value);
+  };
   const perfNum = (window.location.href.split("=?")[1]);
   const category = ["[공연기획] 기술 적용 검토", "[계획수립] 기술 적용 확정", "[제작회의] 기술 활용형태 협의", "[연출제작] 기술 연출제작", "[연출설치]"];
 
@@ -465,6 +396,7 @@ export default function FullScreenDialog(props) {
             })
         }
     }
+    //console.log(`calc(${window.innerHeight - 30} +px)`)
   },[]);
 
   React.useEffect(()=>{
@@ -659,25 +591,24 @@ export default function FullScreenDialog(props) {
                                                                         <Box style={{ zIndex:300, position:"absolute", borderBottom:'solid 1px #e3e7f0',backgroundColor: '#ffffff',
                                                                             maxWidth:1080, maxHeight:56, overflow:"hidden"}}>
                                                                                 <Box style={{ position:'static',display:"flex", flexDirection:'row', alignItems:'center', justifyItems:'center', width:1080, height:56}}>
-                                                                                    <Box style={{ display:"flex", flexDirection:'row', alignItems:'center', borderRadius: 3, backgroundColor: '#f7f8fa', width:79, height:24, marginLeft:16 }}>
-                                                                                        <Typography align= 'center' style={{
-                                                                                                            marginLeft:4,      
-                                                                                                            width:79,
-                                                                                                            fontFamily: 'NotoSansCJKkr',
-                                                                                                            fontSize: 12,
-                                                                                                            fontWeight: 500,
-                                                                                                            fontStretch: 'normal',
-                                                                                                            fontStyle: 'normal',
-                                                                                                            lineHeight: 1.67,
-                                                                                                            letterSpacing: 'normal',
-                                                                                                            color: '#a4a9b3',
-                                                                                        }}>
-                                                                                        진행예정
-                                                                                        </Typography>
-                                                                                        <IconButton style={{width:16,height:16}} >
-                                                                                            <ExpandMoreIcon aria-label="expandstata" style={{width:16,height:16}}/>
-                                                                                        </IconButton>
-                                                                                    </Box>
+                                                                                         <FormControl className={classes.formControl}>
+                                                                                            <Select
+                                                                                              value={status}
+                                                                                              onChange={handleStatus}
+                                                                                              displayEmpty
+                                                                                              className={classes.selectEmpty}
+                                                                                              inputProps={{ 'aria-label': 'Without label' }}
+                                                                                              style={{ display:"flex", flexDirection:'row', alignItems:'center', borderRadius: 3, width:79, height:24, marginLeft:16, fontSize:12, backgroundColor:'#f7f8fa' }}
+                                                                                            >
+                                                                                              <MenuItem value="">
+                                                                                                <em>진행 예정</em>
+                                                                                              </MenuItem>
+                                                                                              <MenuItem value={10}>진행중</MenuItem>
+                                                                                              <MenuItem value={20}>완료</MenuItem>
+                                                                                            </Select>
+
+                                                                                          </FormControl>
+
                 
                                                                                     <Typography style={{marginLeft:10, width:760, color: '#232426'}}>{t.TName}</Typography>
 
@@ -1015,17 +946,30 @@ export default function FullScreenDialog(props) {
 
                                                                         </Box>
                                                                         <Box style={{  backgroundColor: '#fbfcfe',
-                                                                            borderTop:'solid 1px #e3e7f0', 
-                                                                            borderBottom:'solid 1px #e3e7f0', 
-                                                                            position: 'absolute', width:354, minHeight: 340, maxHeight:340, right:17, bottom:100}}>
+                                                                            borderTop:'solid 1px #e3e7f0',
+                                                                            borderBottom:'solid 1px #e3e7f0',
+                                                                            position: 'absolute', width:354, minHeight: window.innerHeight - 270 , maxHeight:  window.innerHeight - 270,overflowY:"auto", right:19, bottom:100}}>
                                                                             {
                                                                                 logvalue==0?
                                                                                 comments.map(cm =>{
                                                                                         return(
                                                                                             <Box>
-                                                                                                {cm.create}
-                                                                                                {cm.username}
-                                                                                                {cm.text}
+                                                                                                <List>
+                                                                                                      <Divider component="li" />
+                                                                                                      <li>
+                                                                                                        <Typography
+                                                                                                          className={classes.dividerFullWidth}
+                                                                                                          color="textSecondary"
+                                                                                                          display="block"
+                                                                                                          variant="caption"
+                                                                                                        >
+                                                                                                          {cm.username}
+                                                                                                        </Typography>
+                                                                                                      </li>
+                                                                                                      <ListItem>
+                                                                                                        <ListItemText primary={cm.text} secondary={cm.create} />
+                                                                                                      </ListItem>
+                                                                                                </List>
                                                                                             </Box>
                                                                                         );
                                                                                         })
@@ -1034,10 +978,24 @@ export default function FullScreenDialog(props) {
                                                                                 logs.map(lo =>{
                                                                                     return (
                                                                                         <Box>
-                                                                                            {lo.date}
-                                                                                            {lo.userdetail}
-                                                                                            {lo.mod}
-                                                                                        </Box>
+                                                                                                <List>
+                                                                                                      <Divider component="li" />
+                                                                                                      <li>
+                                                                                                        <Typography
+                                                                                                          className={classes.dividerFullWidth}
+                                                                                                          color="textSecondary"
+                                                                                                          display="block"
+                                                                                                          variant="caption"
+                                                                                                        >
+                                                                                                          {lo.username}
+                                                                                                        </Typography>
+                                                                                                      </li>
+                                                                                                      <ListItem>
+                                                                                                        <ListItemText primary={lo.mod} secondary={lo.date} />
+                                                                                                      </ListItem>
+                                                                                                </List>
+                                                                                            </Box>
+
                                                                                     );
                                                                                 })
                                                                                 :
@@ -1049,7 +1007,7 @@ export default function FullScreenDialog(props) {
                                                                         <Box style={{  backgroundColor: '#ffffff',
                                                                             borderTop:'solid 1px #e3e7f0', 
                                                                             borderBottom:'solid 1px #e3e7f0', 
-                                                                            position: 'absolute', width:354, height:100, right:17, bottom:0}}>
+                                                                            position: 'absolute', width:354, height:100, right:19, bottom:0}}>
                                                                              <InputBase
                                                                                 className={classes.margin}
                                                                                 type='text'
@@ -1095,10 +1053,11 @@ export default function FullScreenDialog(props) {
                                                                 }}>
                                                             공연 연출팀
                                                         </ButtonBase>
-                                                        
+
                                                         <ButtonBase style={{marginLeft:112}}>
                                                             마감일
                                                         </ButtonBase>
+
                                                             
                                                     </Box>
                                                 </Box>

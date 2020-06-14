@@ -25,6 +25,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 function Copyright() {
   return (
@@ -190,8 +191,13 @@ export default function App() {
   const [title, setTitle] = React.useState("");
   const [category, setCategory] = React.useState([]);
   const [username, setUsername] = React.useState([]);
-
+  const [file, setFile] = React.useState([]);
   const [sidetitle, setSidetitle] = React.useState("");
+  const [state, setState] = React.useState({
+      displayed_form: '',
+      logged_in: localStorage.getItem('token') ? true : false,
+      username: ''
+    });
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -224,6 +230,19 @@ export default function App() {
           setTasks(data);
       })
   },[]);
+    React.useEffect(()=>{
+    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/file`,{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+          setFile(data);
+      })
+  },[]);
   React.useEffect(()=>{
 
             fetch('http://localhost:8000/Tech/current_user/', {
@@ -252,6 +271,11 @@ export default function App() {
     }
     console.log(s);
     setSideopen(s);
+  };
+  const handle_logout = () => {
+    localStorage.removeItem('token');
+    setState({ logged_in: false, username: '' });
+
   };
 
   return (
@@ -283,6 +307,15 @@ export default function App() {
 
             <Divider variant="middle" orientation="vertical" flexItem />
 
+            <ButtonBase href={'/'}>
+            <IconButton onClick={handle_logout}>
+                <Avatar className={classes.menuIcon}>
+                  <ExitToAppIcon />
+                </Avatar>
+            </IconButton>
+            </ButtonBase>
+
+            <Divider variant="middle" orientation="vertical" flexItem />
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             <Typography color="textSecondary" variant="button" noWrap>
               {username}
@@ -381,8 +414,11 @@ export default function App() {
                                                           letterSpacing: 0,
                                                           color: "#6a6d74", 
                                         marginLeft:20, marginTop:20 ,display: 'flex',flexDirection: 'row', alignItems: 'center'}}>
-                                        {sidetitle} 
+                                        {sidetitle}
                                     </Typography>
+                                  {
+
+                                  }
                                 </Box>
                         </Box>
                     </Grid>
