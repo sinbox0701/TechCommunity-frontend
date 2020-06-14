@@ -176,6 +176,7 @@ export default function App() {
       logged_in: localStorage.getItem('token') ? true : false,
       username: ''
     });
+  const [user, setUser] = React.useState([]);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -192,7 +193,18 @@ export default function App() {
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const fixedHeightSidePaper = clsx(classes.sidepaper, classes.fixedHeight);
+  React.useEffect(()=>{
 
+            fetch('http://localhost:8000/Tech/current_user/', {
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            }).then(res => res.json()).then(json => {
+              console.log(json)
+              setUser(json.username);
+            });
+
+    },[user]);
   return (
     <React.Fragment>
       <Box className={classes.root}>
@@ -223,7 +235,7 @@ export default function App() {
 
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             <Typography color="textSecondary" variant="button" noWrap>
-              사용자명
+              {user}
             </Typography>
         
             
