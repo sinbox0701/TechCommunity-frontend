@@ -42,8 +42,8 @@ import BeachAccessIcon from '@material-ui/icons/BeachAccess';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
-
-import TaskInfo from '../../component/task/taskInfo';
+import ReplayIcon from '@material-ui/icons/Replay';
+import TaskInfo from '../../component/task/TaskInfo';
 
 
 TabPanel.propTypes = {
@@ -209,11 +209,20 @@ export default function FullScreenDialog(props) {
         10:"",
     }
   );
-   const [status, setStatus] = React.useState('');
-
+   const [status, setStatus] = React.useState([]);
   const handleStatus = (event) => {
+      fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}/mod`,{
+         method:"PUT",
+         data: event.target.value,
+          headers: {
+             'Content-Type': 'application/json',
+             Authorization: `JWT ${localStorage.getItem('token')}`
+          },
+        }
+        )
     setStatus(event.target.value);
   };
+
   const perfNum = (window.location.href.split("=?")[1]);
   const category = ["[공연기획] 기술 적용 검토", "[계획수립] 기술 적용 확정", "[제작회의] 기술 활용형태 협의", "[연출제작] 기술 연출제작", "[연출설치]"];
 
@@ -250,7 +259,7 @@ export default function FullScreenDialog(props) {
              Authorization: `JWT ${localStorage.getItem('token')}`
          },
          body: JSON.stringify(post)
-     }).then(res => res.json).then(data => console.log(data));
+     }).then(res => res.json).then(data => console.log(data)).then(() => window.location.reload());
   };
   const handleEditClick = (event, sc, v) => {
     setSelsectCont(sc);
@@ -319,7 +328,7 @@ export default function FullScreenDialog(props) {
     setFile(null)
     }).catch((error) => {
     setResponse("error");
-    })
+    }).then(() => window.location.reload())
   }
 
   function uploadWithFormData(){
@@ -398,6 +407,8 @@ export default function FullScreenDialog(props) {
     }
     //console.log(`calc(${window.innerHeight - 30} +px)`)
   },[]);
+
+
 
   React.useEffect(()=>{
     const tn = [];
@@ -600,11 +611,11 @@ export default function FullScreenDialog(props) {
                                                                                               inputProps={{ 'aria-label': 'Without label' }}
                                                                                               style={{ display:"flex", flexDirection:'row', alignItems:'center', borderRadius: 3, width:79, height:24, marginLeft:16, fontSize:12, backgroundColor:'#f7f8fa' }}
                                                                                             >
-                                                                                              <MenuItem value="">
+                                                                                              <MenuItem value={0}>
                                                                                                 <em>진행 예정</em>
                                                                                               </MenuItem>
-                                                                                              <MenuItem value={10}>진행중</MenuItem>
-                                                                                              <MenuItem value={20}>완료</MenuItem>
+                                                                                              <MenuItem value={1}>진행중</MenuItem>
+                                                                                              <MenuItem value={2}>완료</MenuItem>
                                                                                             </Select>
 
                                                                                           </FormControl>
@@ -641,7 +652,7 @@ export default function FullScreenDialog(props) {
                                                                             borderRight:'solid 1px #e3e7f0', 
                                                                             backgroundColor: '#ffffff'
                                                                             , minHeight:192, marginTop:56}}>
-                                                                             <TaskInfo obj={t.objective}/>
+                                                                             <TaskInfo obj={t}/>
                                                                         </Box>
                                                                         <Box style={{ display: 'flex',flexDirection: 'row', alignItems: 'start',justifyContent: 'flex-start',overflow:"auto"}}>
                                                                             <Box  style={{
@@ -941,6 +952,7 @@ export default function FullScreenDialog(props) {
                                                                                 <Tab label="회의실" className={classes.logtab}/>
                                                                                 <Tab label="변경이력" className={classes.logtab}/>
                                                                             </Tabs>
+
                                                                         </Box>
                                                                         <Box style={{  height:'auto'}}>
 
