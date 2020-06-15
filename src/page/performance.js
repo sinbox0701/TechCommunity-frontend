@@ -1,5 +1,6 @@
 import React from "react"
 import { BrowserRouter as Router,Route,Switch } from "react-router-dom";
+import FileSaver from 'file-saver'
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -26,6 +27,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 
 function Copyright() {
   return (
@@ -193,6 +195,7 @@ export default function App() {
   const [username, setUsername] = React.useState([]);
   const [file, setFile] = React.useState([]);
   const [sidetitle, setSidetitle] = React.useState("");
+  const [bFile,setBFile] = React.useState([]);
   const [state, setState] = React.useState({
       displayed_form: '',
       logged_in: localStorage.getItem('token') ? true : false,
@@ -240,9 +243,58 @@ export default function App() {
       .then(response => response.json())
       .then(data => {
         console.log(data);
-          setFile(data);
+        setFile(data);
       })
   },[]);
+    const downLink = (f) => (event) => {
+      //const dfile=[];
+      console.log(f)
+      event.preventDefault();
+        if(f.f.fcontent !== undefined){
+          if(f.f.fcontent !== null) {
+            fetch(`http://127.0.0.1:8000${f.f.fcontent}`, {
+              method: "GET",
+              headers: {
+                Authorization: `JWT ${localStorage.getItem('token')}`
+              },
+            }).then(response => response.blob())
+                .then(data => {
+                  //let url = window.URL.createObjectURL(data);
+                  console.log(data);
+                  const url = window.URL.createObjectURL(data);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.setAttribute('download', 'name of file');
+                  document.body.appendChild(link);
+                  link.click();
+                  //console.log(url);
+                  //dfile.push(data);
+
+                })
+          }
+        }
+      //console.log()
+      //setBFile(dfile);
+      //FileSaver.saveAs(dfile[0],`${dfile[0]}`);
+          //const blob = new Blob([dfile[0]], {type: `${dfile[0].type}`});
+      // dfile.map(df=>{
+      //   console.log(df);
+      //   let url = window.URL.createObjectURL(df);
+      //   console.log(url);
+      // })
+
+          //setBFile(dfile.data);
+          //console.log(bFile);
+        //  let url = window.URL.createObjectURL(bFile[0]);
+
+         // const date = Moment(new Date()).format("YYYY_MM_DD-HH_mm_ss");
+
+          // Creating the hyperlink and auto click it to start the download
+        //  let link = document.createElement('a');
+        //  link.href = url;
+        // link.download = 'dump_.pdf';
+       //   link.click();
+    }
   React.useEffect(()=>{
 
             fetch('http://localhost:8000/Tech/current_user/', {
@@ -417,7 +469,22 @@ export default function App() {
                                         {sidetitle}
                                     </Typography>
                                   {
-
+                                    file.map( f => {
+                                      if(f.fcontent!==undefined){
+                                        return(
+                                            <Box>
+                                              <div>
+                                              {f.fcontent}
+                                              </div>
+                                              <div>
+                                                <IconButton onClick={downLink({f})} >
+                                                  <ArrowDownwardIcon/>
+                                                </IconButton>
+                                              </div>
+                                            </Box>
+                                        );
+                                      }
+                                    })
                                   }
                                 </Box>
                         </Box>
