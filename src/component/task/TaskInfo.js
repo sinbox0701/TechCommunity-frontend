@@ -1,4 +1,6 @@
 import React from 'react';
+import DatetimePicker,{ setLocale, parseDate } from 'react-datetimepicker-syaku';
+
 
 import {Button,ButtonBase, Box, Typography} from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
@@ -28,16 +30,37 @@ const styles = makeStyles((theme) => ({
 export default function TaskInfo(props) {
   const classes = styles();
   const perfNum = (window.location.href.split("=?")[1]);
-  const [date, setDate] = React.useState(new Date([]));
-    const handleDateChange = (e) => {
-    setDate(e.target.value);
-  };
-    const handleDate  = (event) => {
-        event.preventDefault();
-        console.log(date)
+ // const [date, setDate] = React.useState(new Date([]));
+  const [state, setState] = React.useState({
+      datetime: [],
+      value: '',
+  })
+  const {datetime,value} = state;
+  const onDatetime= (datetime, value, name) => {
+    setState({ [name]: { datetime, value } });
+    //event.preventDefault();
+        console.log(state)
       fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${props.obj.TNum}`,{
          method:"PUT",
-         data: date,
+         data: datetime,
+          headers: {
+             'Content-Type': 'application/json',
+             Authorization: `JWT ${localStorage.getItem('token')}`
+          },
+        }
+        )
+        console.log('ok');
+  }
+  //   const handleDateChange = (e) => {
+  //   setDate(e.target.value);
+  // };
+
+    const handleDate  = (event) => {
+        event.preventDefault();
+        //console.log(date)
+      fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${props.obj.TNum}`,{
+         method:"PUT",
+         data: state,
           headers: {
              'Content-Type': 'application/json',
              Authorization: `JWT ${localStorage.getItem('token')}`
@@ -153,23 +176,11 @@ export default function TaskInfo(props) {
                 마감일
               </Typography>
               <Box style={{ flexDirection:'row', width:430, minHeight:44,marginLeft:20}}>
-                 <form className={classes.container} noValidate onSubmit={handleDate}>
-                  <TextField
-                    id="date"
-                    label="마감일"
-                    type="date"
-                    defaultValue="2020-06-16"
-                    value={date}
-                    onchange={handleDateChange}
-                    className={classes.textField}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                     <IconButton type='submit'>
-                         <CheckIcon/>
-                     </IconButton>
-                </form>
+                <DatetimePicker
+                onChange={(datetime, value) => onDatetime(datetime, value, 'value')}
+                defaultValue={[parseDate('2013-12-26')]}
+                allowInput
+              />
               </Box>
             </Box>
             <Box style={{ display:"flex",flexDirection:'row', width:612, minHeight:44,marginBottom:20}}>

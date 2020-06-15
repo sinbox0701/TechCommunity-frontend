@@ -211,16 +211,28 @@ export default function FullScreenDialog(props) {
   );
    const [status, setStatus] = React.useState([]);
   const handleStatus = (event) => {
-      fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}/mod`,{
+      console.log(event.target)
+      setStatus({
+          ...state,
+          [event.target.name]: event.target.value
+      });
+      console.log(status)
+  };
+   const handleSubmit = (e) =>{
+      e.preventDefault();
+       const post = {
+           status:status
+    };
+    console.log(post);
+     fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}/mod`,{
          method:"PUT",
-         data: event.target.value,
+         data: post,
           headers: {
              'Content-Type': 'application/json',
              Authorization: `JWT ${localStorage.getItem('token')}`
           },
         }
-        )
-    setStatus(event.target.value);
+        ).then(res => res.json).then(data => console.log(data));
   };
 
   const perfNum = (window.location.href.split("=?")[1]);
@@ -378,20 +390,18 @@ export default function FullScreenDialog(props) {
       .then(data => {
           console.log(data)
           setTasks(data);
-          
           data.map( d => {
-            if(d.Dbool === true){
+            if(d.Dbool === 1){
                 TN.push(d)
             }
         })
     })
     console.log(TN)
     setTName(TN)
-
     const temp=[]
     if(select !== 0){
         if(select !== 3){
-            
+            console.log('ok')
             fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}`,{
          method:"GET",
          headers: {
@@ -434,9 +444,17 @@ export default function FullScreenDialog(props) {
             .then(data => {
                 console.log(data)
                 setContents(data);
+                data.map(d =>{
+                    temp.push(d.status)
+                })
+
             })
+            console.log(temp)
+            //console.log(status)
         }
     }
+    setStatus(temp)
+      console.log(status)
   },[select]);
 
   React.useEffect(()=>{
@@ -450,7 +468,7 @@ export default function FullScreenDialog(props) {
     if(contents !== []){
         console.log(contents)
         contents.map( c =>{
-        if(c.Dbool === false){
+        if(c.Dbool === 0){
             cc.push(c);
             cl.push(c.DetName);
             cnum.push(c.DetNum);
@@ -571,7 +589,7 @@ export default function FullScreenDialog(props) {
                         {
                             tasks.map( (t,index) => 
                                 {
-                                    if (t.Dbool === true){
+                                    if (t.Dbool === 1){
                                         if (t.category === i+1){
                                             return (
                                                 <Box style={{backgroundColor: '#ffffff', width:280, height:88, marginBottom:12,
@@ -602,9 +620,10 @@ export default function FullScreenDialog(props) {
                                                                         <Box style={{ zIndex:300, position:"absolute", borderBottom:'solid 1px #e3e7f0',backgroundColor: '#ffffff',
                                                                             maxWidth:1080, maxHeight:56, overflow:"hidden"}}>
                                                                                 <Box style={{ position:'static',display:"flex", flexDirection:'row', alignItems:'center', justifyItems:'center', width:1080, height:56}}>
-                                                                                         <FormControl className={classes.formControl}>
+                                                                                         <form className={classes.formControl} onSubmit={handleSubmit}>
                                                                                             <Select
-                                                                                              value={status}
+                                                                                              value={status[t.id]}
+                                                                                              name={t.id}
                                                                                               onChange={handleStatus}
                                                                                               displayEmpty
                                                                                               className={classes.selectEmpty}
@@ -617,8 +636,10 @@ export default function FullScreenDialog(props) {
                                                                                               <MenuItem value={1}>진행중</MenuItem>
                                                                                               <MenuItem value={2}>완료</MenuItem>
                                                                                             </Select>
-
-                                                                                          </FormControl>
+                                                                                             <IconButton type='submit'>
+                                                                                                 <CheckCircleTwoToneIcon/>
+                                                                                             </IconButton>
+                                                                                          </form>
 
                 
                                                                                     <Typography style={{marginLeft:10, width:760, color: '#232426'}}>{t.TName}</Typography>
