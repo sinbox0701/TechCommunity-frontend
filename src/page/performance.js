@@ -29,6 +29,9 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 
+
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -60,6 +63,11 @@ const styles = makeStyles(theme => ({
     backgroundColor:"#fbfcfe",
     flexGrow: 1,
     width:540,
+  },
+  list: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
   },
   
   toolbar: {
@@ -264,7 +272,7 @@ export default function App() {
                   const url = window.URL.createObjectURL(data);
                   const link = document.createElement('a');
                   link.href = url;
-                  link.setAttribute('download', 'name of file');
+                  link.setAttribute('download', `${f.f.name}`);
                   document.body.appendChild(link);
                   link.click();
                   //console.log(url);
@@ -468,24 +476,30 @@ export default function App() {
                                         marginLeft:20, marginTop:20 ,display: 'flex',flexDirection: 'row', alignItems: 'center'}}>
                                         {sidetitle}
                                     </Typography>
+                                    <Box style={{minHeight: window.innerHeight - 200 , maxHeight:  window.innerHeight - 200,overflowY:"auto"}}>
                                   {
                                     file.map( f => {
                                       if(f.fcontent!==undefined){
                                         return(
                                             <Box>
-                                              <div>
-                                              {f.fcontent}
-                                              </div>
-                                              <div>
-                                                <IconButton onClick={downLink({f})} >
-                                                  <ArrowDownwardIcon/>
-                                                </IconButton>
-                                              </div>
+                                               <List className={classes.list} >
+                                                <ListItem>
+                                                  <ListItemAvatar>
+                                                    <Avatar>
+                                                    <IconButton onClick={downLink({f})} >
+                                                      <ArrowDownwardIcon/>
+                                                    </IconButton>
+                                                    </Avatar>
+                                                  </ListItemAvatar>
+                                                  <ListItemText primary={f.name} secondary={f.storage} />
+                                                </ListItem>
+                                              </List>
                                             </Box>
                                         );
                                       }
                                     })
                                   }
+                                  </Box>
                                 </Box>
                         </Box>
                     </Grid>
