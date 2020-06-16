@@ -978,10 +978,8 @@ export default function FullScreenDialog(props) {
                                                                         <Box style={{  height:'auto'}}>
 
                                                                         </Box>
-                                                                        <Box style={{  backgroundColor: '#fbfcfe',
-                                                                            borderTop:'solid 1px #e3e7f0',
-                                                                            borderBottom:'solid 1px #e3e7f0',
-                                                                            position: 'absolute', width:354, minHeight: window.innerHeight - 270 , maxHeight:  window.innerHeight - 270,overflowY:"auto", right:19, bottom:100}}>
+                                                                        <Box style={{ 
+                                                                            position: 'absolute', minHeight: window.innerHeight - 250 , maxHeight:  window.innerHeight - 250,overflowY:"auto"}}>
                                                                             {
                                                                                 logvalue==0?
                                                                                 comments.map(cm =>{
