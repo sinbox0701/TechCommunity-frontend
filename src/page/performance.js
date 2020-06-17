@@ -419,7 +419,7 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="처음으로" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,0,"Team")} style={{marginTop:40}} > 
+            <ListItem button component="a" /*onClick={ (event) => handleSelectSide(event,0,"Team")} style={{marginTop:40}}*/ >
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <PeopleAltTwoToneIcon />
@@ -435,7 +435,7 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="Files" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,2,"Template" )} >
+            <ListItem button component="a" /*onClick={ (event) => handleSelectSide(event,2,"Template" )}*/ >
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <LayersIcon/>
@@ -443,7 +443,7 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="Template" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a"  onClick={ (event) => handleSelectSide(event,3,"Recycle Bin")} >
+            <ListItem button component="a"  /*onClick={ (event) => handleSelectSide(event,3,"Recycle Bin")}*/ >
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <DeleteForeverIcon/>
@@ -464,7 +464,7 @@ export default function App() {
                 <Grid container>
                     <Grid>
                         <Box style={{  borderBottom:'solid 1px #e3e7f0',backgroundColor: '#ffffff',
-                            width:1080, height:56}}>
+                            width:1080, height:70}}>
                                 <Box>
                                     <Typography style={{  fontSize:25,  
                                                           fontWeight: 'bold',
@@ -476,29 +476,32 @@ export default function App() {
                                         marginLeft:20, marginTop:20 ,display: 'flex',flexDirection: 'row', alignItems: 'center'}}>
                                         {sidetitle}
                                     </Typography>
-                                    <Box style={{minHeight: window.innerHeight - 200 , maxHeight:  window.innerHeight - 200,overflowY:"auto"}}>
-                                  {
-                                    file.map( f => {
-                                      if(f.fcontent!==undefined){
-                                        return(
-                                            <Box>
-                                               <List className={classes.list} >
-                                                <ListItem>
-                                                  <ListItemAvatar>
-                                                    <Avatar>
-                                                    <IconButton onClick={downLink({f})} >
-                                                      <ArrowDownwardIcon/>
-                                                    </IconButton>
-                                                    </Avatar>
-                                                  </ListItemAvatar>
-                                                  <ListItemText primary={f.name} secondary={f.storage} />
-                                                </ListItem>
-                                              </List>
-                                            </Box>
-                                        );
+                                    <Box style={{
+                                      width:540,
+                                      position:'absolute',
+                                      minHeight: window.innerHeight - 270 , maxHeight:  window.innerHeight - 270,overflowY:"auto"}}>
+                                      {
+                                        file.map( f => {
+                                          if(f.fcontent!==undefined){
+                                            return(
+                                                <Box>
+                                                   <List className={classes.list} >
+                                                    <ListItem>
+                                                      <ListItemAvatar>
+                                                        <Avatar>
+                                                        <IconButton onClick={downLink({f})} >
+                                                          <ArrowDownwardIcon/>
+                                                        </IconButton>
+                                                        </Avatar>
+                                                      </ListItemAvatar>
+                                                      <ListItemText primary={f.name} secondary={f.storage} />
+                                                    </ListItem>
+                                                  </List>
+                                                </Box>
+                                            );
+                                          }
+                                        })
                                       }
-                                    })
-                                  }
                                   </Box>
                                 </Box>
                         </Box>

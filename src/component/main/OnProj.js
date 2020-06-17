@@ -100,12 +100,14 @@ export default function RecipeReviewCard() {
   const [inputs, setInputs] = React.useState({
       genre:"",
       title:"",
-      direction:"",
-      construct:"",
+      directiont:"",
+      configurationt:"",
       check:"",
-      date:""
+      date:"",
+      place:"",
+      special:""
   });
-  const {genre, title, direction, construct, check, date} = inputs;
+  const {genre, title, directiont, configurationt, check, date, place, special} = inputs;
 
   const delClick = (event) => {
     event.preventDefault();
@@ -143,10 +145,12 @@ export default function RecipeReviewCard() {
        const post = {
            genre:genre,
            title:title,
-           direction:direction,
-           construct:construct,
+           directiont:directiont,
+           configurationt:configurationt,
            check:check,
-           date:date
+           date:date,
+           place:place,
+           special:special
     };
     console.log(post);
     fetch('http://127.0.0.1:8000/Tech/add/',{
@@ -296,8 +300,8 @@ return (
                         id="direction"
                         label="Direction"
                         type="direction"
-                        name="direction"
-                        value={direction}
+                        name="directiont"
+                        value={directiont}
                         onChange={onChange}
                         fullWidth
                     />
@@ -307,8 +311,8 @@ return (
                         id="construct"
                         label="Construct"
                         type="construct"
-                        name="construct"
-                        value={construct}
+                        name="configurationt"
+                        value={configurationt}
                         onChange={onChange}
                         fullWidth
                     />
@@ -334,6 +338,29 @@ return (
                         onChange={onChange}
                         fullWidth
                     />
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="place"
+                        label="Place"
+                        type="place"
+                        name="place"
+                        value={place}
+                        onChange={onChange}
+                        fullWidth
+                    />
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="special"
+                        label="Special"
+                        type="special"
+                        name="special"
+                        value={special}
+                        onChange={onChange}
+                        fullWidth
+                    />
+
                 </DialogContent>
                 <DialogActions>
                 <Button onClick={handleClose} color="primary">
