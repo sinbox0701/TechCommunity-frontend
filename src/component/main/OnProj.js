@@ -277,7 +277,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="genre"
-                        label="Genre"
+                        label="장르"
                         type="genre"
                         name="genre"
                         value={genre}
@@ -288,7 +288,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="title"
-                        label="Title"
+                        label="공연명"
                         type="title"
                         name="title"
                         value={title}
@@ -299,7 +299,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="direction"
-                        label="Direction"
+                        label="공연 기획 방향(사업계획서)"
                         type="direction"
                         name="directiont"
                         value={directiont}
@@ -310,7 +310,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="construct"
-                        label="Construct"
+                        label="공연구성 및 내용(공연기획서)"
                         type="construct"
                         name="configurationt"
                         value={configurationt}
@@ -321,7 +321,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="check"
-                        label="Check"
+                        label="공연 횟수"
                         type="check"
                         name="check"
                         value={check}
@@ -332,7 +332,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="date"
-                        label="Date"
+                        label="공연 일정"
                         type="date"
                         name="date"
                         value={date}
@@ -343,7 +343,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="place"
-                        label="Place"
+                        label="공연 장소"
                         type="place"
                         name="place"
                         value={place}
@@ -354,7 +354,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="special"
-                        label="Special"
+                        label="특이 사항"
                         type="special"
                         name="special"
                         value={special}
