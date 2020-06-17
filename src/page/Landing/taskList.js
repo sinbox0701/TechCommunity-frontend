@@ -636,9 +636,7 @@ export default function FullScreenDialog(props) {
                                                                                               <MenuItem value={1}>진행중</MenuItem>
                                                                                               <MenuItem value={2}>완료</MenuItem>
                                                                                             </Select>
-                                                                                             <IconButton type='submit'>
-                                                                                                 <CheckCircleTwoToneIcon/>
-                                                                                             </IconButton>
+
                                                                                           </form>
 
                 
@@ -978,8 +976,11 @@ export default function FullScreenDialog(props) {
                                                                         <Box style={{  height:'auto'}}>
 
                                                                         </Box>
-                                                                        <Box style={{ 
-                                                                            position: 'absolute', minHeight: window.innerHeight - 250 , maxHeight:  window.innerHeight - 250,overflowY:"auto"}}>
+                                                                        <Box style={{
+                                                                            backgroundColor: '#fbfcfe',
+                                                                            borderTop:'solid 1px #e3e7f0',
+                                                                            borderBottom:'solid 1px #e3e7f0',
+                                                                            position: 'absolute', width:354, minHeight: window.innerHeight - 270 , maxHeight:  window.innerHeight - 270,overflowY:"auto",right:19, bottom:100}}>
                                                                             {
                                                                                 logvalue==0?
                                                                                 comments.map(cm =>{
