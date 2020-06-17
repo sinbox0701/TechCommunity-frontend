@@ -109,9 +109,9 @@ export default function RecipeReviewCard() {
   });
   const {genre, title, directiont, configurationt, check, date, place, special} = inputs;
 
-  const delClick = (event) => {
+  const delClick = (id) => (event) => {
     event.preventDefault();
-    const {id} = event.target;
+    console.log(id)
     fetch(`http://127.0.0.1:8000/Tech/delete/${id}`,{
         method:'DELETE',
         headers:{
@@ -238,9 +238,10 @@ return (
                                         {` 명 참여중`}
                                         </Typography>  
                                       </Box>
-                                      <IconButton aria-label="settings" className={classes.icon} id={p.id} onClick={delClick} >
-                                          <DeleteIcon />
-                                      </IconButton>
+                                          <IconButton aria-label="settings" className={classes.icon} id={p.id}  onClick={delClick(p.id)} >
+                                              <DeleteIcon />
+                                          </IconButton>
+
                                     </Box>
                                     <ButtonBase href={`/perf/=?${p.id}`}>
                                       <CardHeader
