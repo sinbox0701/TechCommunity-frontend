@@ -19,7 +19,7 @@ export default function taskInfo(props) {
 
   return (
     <div className={classes.root}>
-        <Box style={{width:148, minHeight:232}}>
+        <Box style={{minWidth:148, minHeight:232}}>
           <Box style={{ display:"flex", flexDirection:'row', alignItems:'center', justifyItems:'center', 
             borderRadius: 3, width:60, height:24, marginLeft:20, marginTop:16 }}>
             <ListOutlinedIcon style={{ color:'#6a6d74', width:20,height:20, marginLeft:3}}/>

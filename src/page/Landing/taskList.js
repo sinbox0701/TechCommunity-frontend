@@ -11,15 +11,18 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Slide from '@material-ui/core/Slide';
-import {Input, InputBase, Box, ButtonBase, Drawer, Grid} from '@material-ui/core';
+import {Input, InputBase, Box, ButtonBase, Drawer, Grid, TextField} from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
+import axios from 'axios';
 
 import PropTypes from 'prop-types';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
+import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
+import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import EditTwoToneIcon from '@material-ui/icons/EditTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
 import SendTwoToneIcon from '@material-ui/icons/SendTwoTone';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
@@ -85,6 +88,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor:"#fbfcfe",
         flexGrow: 1,
         width:1080,
+        overflowY:"auto"
       },
       paper: {
         border:"solid 1px",
@@ -102,6 +106,17 @@ const useStyles = makeStyles((theme) => ({
         background:"#0068ff",
         color:"#0068ff"
       },
+
+      logtab: {
+        marginLeft:10,
+        marginRight:10,
+        height:48,
+        minWidth:70,
+      },
+      logindicator: {
+        background:"#0068ff",
+        color:"#0068ff"
+      },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -111,7 +126,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function FullScreenDialog(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [editOpen, setEditOpen] = React.useState(false);
+
   const [select,setSelect] = React.useState(0);
+  const [selectCont, setSelsectCont] = React.useState(-1);
+
+  const [oldCont, setOldcont] = React.useState("");
+  const [newCont, setNewcont] = React.useState("");
   
   const [cnumlist, setCNumlist] = React.useState([]);
 
@@ -124,6 +145,15 @@ export default function FullScreenDialog(props) {
   const [tlist,setTlist] = React.useState([]);
   const [cclist,setCclist] = React.useState([]);
   const [klist, setKlist] = React.useState([]);
+
+  const [fileUploadState, setFileUploadState]=React.useState("");
+
+  const inputReference = React.useRef()
+  
+  const [title, setTitle] =  React.useState("");
+  const [file, setFile] =  React.useState(null);
+  const [desc, setDesc] =  React.useState("");
+
 
   const [state, setState] = React.useState(false);
   const [textfeild, setTextfeild] = React.useState(
@@ -145,12 +175,57 @@ export default function FullScreenDialog(props) {
   const category = ["[공연기획] 기술 적용 검토", "[계획수립] 기술 적용 확정", "[제작회의] 기술 활용형태 협의", "[연출제작] 기술 연출제작", "[연출설치]"];
 
   const [value, setValue] = React.useState(-1);
-  
-  const handleChangeinput = (i, newValue) => {
-    setTextfeild({
-        ...textfeild,
-        i: newValue
-    });
+  const [logvalue, setLogValue] = React.useState(0);
+
+
+  const fileUploadAction = (e,s) => {
+      inputReference.current.click();       
+      setSelsectCont(s)
+  }
+
+  const fileUploadInputChange = (e,s) => {
+      console.log(e.target.files[0])
+      setFileUploadState(e.target.value);
+      setFile(e.target.files[0])
+  }
+
+  const handleEditClick = (event, sc, v) => {
+    setSelsectCont(sc);
+    setOldcont(v);
+    setNewcont(v);
+    setEditOpen(true);
+    console.log(sc);
+    console.log(v)
+  };
+
+  const handleSaveClick = () => {
+    if(window.confirm("저장을 완료하시겠습니까?")) {
+        console.log(newCont)
+        const formData = new FormData();
+        formData.append("tcontent", newCont);
+
+        submitForm("text", formData, (msg) => console.log(msg));
+        console.log(`${oldCont}에서 ${newCont}로 변경하였습니다.`)
+
+        window.location.reload()
+    }
+  };
+
+  const handleCancelClick = () => {
+    if(window.confirm("수정을 취소하시겠습니까?")) {
+        setSelsectCont(-1);
+        //update part
+        setNewcont("")
+        setEditOpen(false);
+    }
+  };
+
+  const handleLogChange = (event, newValue) => {
+    setLogValue(newValue);
+  };
+
+  const handleEditChangeinput = (event) => {
+    setNewcont(event.target.value);
   };
 
   const handleChange = (event, newValue) => {
@@ -167,6 +242,33 @@ export default function FullScreenDialog(props) {
     setOpen(false);
   };
 
+  const submitForm = (contentType, data, setResponse) => {
+    axios({
+    url: `http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}/${selectCont}`,
+    method: 'PUT',
+    data: data,
+    headers: {
+        'Content-Type': contentType,
+        Authorization: `JWT ${localStorage.getItem('token')}`
+    }
+    }).then((response) => {
+    setResponse(response.data);
+    setFile(null)
+    }).catch((error) => {
+    setResponse("error");
+    })
+  }
+
+  function uploadWithFormData(){
+    console.log(file)
+    const formData = new FormData();
+    formData.append("tcontent", "");
+    formData.append("fcontent", file);
+    formData.append("SCNum", selectCont);
+    
+    submitForm("/media/files", formData, (msg) => console.log(msg));
+  }
+
   const toggleDrawer = (s) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
@@ -181,8 +283,25 @@ export default function FullScreenDialog(props) {
   };
 
   React.useEffect(()=>{
+    if(editOpen==false){
+        console.log(newCont)
+    }
+  },[editOpen]);
+
+  React.useEffect(()=>{
+    if(file!=null){
+      uploadWithFormData()
+    }
+  },[file]);
+
+  React.useEffect(()=>{
     const TN = [];
-    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}`)
+    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}`,{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
       .then(response => response.json())
       .then(data => {
           console.log(data)
@@ -200,7 +319,13 @@ export default function FullScreenDialog(props) {
     const temp=[]
     if(select !== 0){
         if(select !== 3){
-            fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}`)
+            
+            fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}`,{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
             .then(response => response.json())
             .then(data => {
                 console.log(data)
@@ -224,7 +349,12 @@ export default function FullScreenDialog(props) {
     const temp=[]
     if(select !== 0){
         if(select !== 3){
-            fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}`)
+            fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}`,{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
             .then(response => response.json())
             .then(data => {
                 console.log(data)
@@ -285,8 +415,10 @@ export default function FullScreenDialog(props) {
             }
         })
     })
+
     console.log("k",k)
     setTextfeild({
+        0: text[0],
         1: text[1],
         2: text[2],
         3: text[3],
@@ -381,8 +513,8 @@ export default function FullScreenDialog(props) {
                                                             <Box className={classes.drawer}>
                                                                 <Grid container>
                                                                     <Grid item xs={12}>
-                                                                        <Box style={{  borderBottom:'solid 1px #e3e7f0',backgroundColor: '#ffffff',
-                                                                            width:1080, height:56}}>
+                                                                        <Box style={{ zIndex:300, position:"absolute", borderBottom:'solid 1px #e3e7f0',backgroundColor: '#ffffff',
+                                                                            maxWidth:1080, maxHeight:56, overflow:"hidden"}}>
                                                                                 <Box style={{ position:'static',display:"flex", flexDirection:'row', alignItems:'center', justifyItems:'center', width:1080, height:56}}>
                                                                                     <Box style={{ display:"flex", flexDirection:'row', alignItems:'center', borderRadius: 3, backgroundColor: '#f7f8fa', width:79, height:24, marginLeft:16 }}>
                                                                                         <Typography align= 'center' style={{
@@ -404,7 +536,7 @@ export default function FullScreenDialog(props) {
                                                                                         </IconButton>
                                                                                     </Box>
                 
-                                                                                    <Typography style={{marginLeft:10, width:780, color: '#232426'}}>{t.TName}</Typography>
+                                                                                    <Typography style={{marginLeft:10, width:760, color: '#232426'}}>{t.TName}</Typography>
 
                                                                                     <ButtonBase style={{ display:"flex", flexDirection:'row', alignItems:'center', justifyItems:'center', borderRadius: 3, backgroundColor: '#f7f8fa', width:112, height:32, marginLeft:16 }}>
                                                                                         <SendTwoToneIcon aria-label="send" style={{marginLeft:6,width:14,height:14}}/> 
@@ -434,7 +566,7 @@ export default function FullScreenDialog(props) {
                                                                         <Box style={{ borderBottom:'solid 1px #e3e7f0', 
                                                                             borderRight:'solid 1px #e3e7f0', 
                                                                             backgroundColor: '#ffffff'
-                                                                            , minHeight:232}}>
+                                                                            , minHeight:192, marginTop:56}}>
                                                                              <TaskInfo obj={t.objective}/>
                                                                         </Box>
                                                                         <Box style={{ display: 'flex',flexDirection: 'row', alignItems: 'start',justifyContent: 'flex-start',overflow:"auto"}}>
@@ -442,7 +574,7 @@ export default function FullScreenDialog(props) {
                                                                                     display: 'flex',flexDirection: 'column', 
                                                                                     borderBottom:'solid 1px #e3e7f0', 
                                                                                     backgroundColor: '#fbfcfe',
-                                                                                    width:148,minHeight:192}}>
+                                                                                    maxWidth:148,minHeight:192}}>
 
                                                                                 <Box style={{ display:"flex", flexDirection:'row', alignItems:'center', justifyItems:'center', 
                                                                                     borderRadius: 3, width:60, height:24, marginLeft:20, marginTop:16, marginBottom:16 }}>
@@ -503,13 +635,13 @@ export default function FullScreenDialog(props) {
                                                                             <Box style={{ borderBottom:'solid 1px #e3e7f0',
                                                                             borderLeft:'solid 1px #e3e7f0',
                                                                             borderRight:'solid 1px #e3e7f0', backgroundColor: '#ffffff'
-                                                                                    , width:572,minHeight:800}}>
+                                                                                    , maxWidth:572,minHeight:800, overflow:"hidden"}}>
                                                                                 <Box style={{  display:"flex",flexDirection:'column', width:572, minHeight:56,}}>
-                                                                                    <Box style={{marginLeft:20,paddingTop:18,width:"auto",height:20}}>
+                                                                                    <Box style={{marginLeft:20,paddingTop:28,width:"auto",height:80}}>
                                                                                         <Typography align='left' style={{
                                                                                                             fontFamily: 'NotoSansCJKkr',
-                                                                                                            fontSize: 14,
-                                                                                                            fontWeight: 550,
+                                                                                                            fontSize: 16,
+                                                                                                            fontWeight: 600,
                                                                                                             fontStretch: 'normal',
                                                                                                             fontStyle: 'normal',
                                                                                                             lineHeight: 'normal',
@@ -523,6 +655,7 @@ export default function FullScreenDialog(props) {
                                                                                 {
                                                                                     klist.map((k,i) => {
                                                                                         return(
+                                                                                        
                                                                                             <Box style={{ display:"flex",flexDirection:'row', marginLeft:20,width:552, minHeight:44,marginBottom:5}}>
                                                                                                 <Typography style={{  width: 100,
                                                                                                                         height: 18,
@@ -539,22 +672,150 @@ export default function FullScreenDialog(props) {
                                                                                                 </Typography>
 
                                                                                                 <Box style={{ display:"flex", flexDirection:'row', width:430, minHeight:44,marginLeft:30}}>
-                                                                                                    <InputBase  style={{  borderRadius: 3,
-                                                                                                                border: 'solid 1px #e3e7f0',
-                                                                                                                backgroundColor: '#ffffff',
-                                                                                                                width:360,height:36}}
-                                                                                                                value={textfeild[i]} onChange={handleChangeinput}
+                                                                                                    {
+                                                                                                    editOpen && (k.id==selectCont)?
+                                                                                                    <div>
+                                                                                                    <InputBase style={{ 
+                                                                                                            paddingLeft:6,
+                                                                                                            paddingTop:6,
+                                                                                                            display:"block",
+
+                                                                                                            borderRadius: 3,
+                                                                                                            border: 'solid 1px #e3e7f0',
+                                                                                                            backgroundColor: '#fbfcfe',
+                                                                                                            maxWidth:346,minWidth:346,
+                                                                                                            
+                                                                                                            width:30, 
+                                                                                                            fontFamily: 'NotoSansCJKkr',
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight: 500,
+                                                                                                            fontStretch: 'normal',
+                                                                                                            fontStyle: 'normal',
+                                                                                                            lineHeight: 1.67,
+                                                                                                            letterSpacing: 'normal',
+                                                                                                            color:'#232426',
+                                                                                                            }}
+                                                                                                            value={newCont}
+                                                                                                            onChange={handleEditChangeinput}
+                                                                                                            placeholder={oldCont}
+                                                                                                            multiline
+                                                                                                            autoFocus
+                                                                                                    />
+
+                                                                                                    <Box style={{display:"flex", float:"right", flexDirection:"row", 
+                                                                                                        marginTop:7,marginLeft:7,width:84,height:36}}
+                                                                                                        visibility={k.filetype?"hidden":"visible"}>
+                                                                                                        <ButtonBase style={{display:"flex", flexDirection:'row',
+                                                                                                                        backgroundColor:"#fbfcfe",width:36,height:20,
+                                                                                                                        borderRadius: 5, border: 'solid 1px #e3e7f0',}}
+                                                                                                                        onClick={handleSaveClick}
+                                                                                                        >
+                                                                                                            <CheckCircleTwoToneIcon style={{color: "#289374", marginLeft:1, marginRight:-1,width:12,height:12}}/>
+                                                                                                            <Typography style={{width:30, 
+                                                                                                                                fontFamily: 'NotoSansCJKkr',
+                                                                                                                                fontSize: 8,
+                                                                                                                                fontWeight: 500,
+                                                                                                                                fontStretch: 'normal',
+                                                                                                                                fontStyle: 'normal',
+                                                                                                                                lineHeight: 1.67,
+                                                                                                                                letterSpacing: 'normal',
+                                                                                                                                color:'#6a6d74',
+                                                                                                            }}>
+                                                                                                                저장
+                                                                                                            </Typography>
+                                                                                                        </ButtonBase>
+
+                                                                                                        <ButtonBase style={{display:"flex", flexDirection:'row',
+                                                                                                                        backgroundColor:"#fbfcfe",width:36,height:20,
+                                                                                                                        marginLeft:8,
+                                                                                                                        borderRadius: 5, border: 'solid 1px #e3e7f0',}}
+                                                                                                                        onClick={handleCancelClick}
+                                                                                                                        >
+                                                                                                            <CancelTwoToneIcon style={{color: "#dc0c31", marginLeft:1, marginRight:-1,width:12,height:12}}/>
+                                                                                                            <Typography style={{width:30, 
+                                                                                                                                fontFamily: 'NotoSansCJKkr',
+                                                                                                                                fontSize: 8,
+                                                                                                                                fontWeight: 500,
+                                                                                                                                fontStretch: 'normal',
+                                                                                                                                fontStyle: 'normal',
+                                                                                                                                lineHeight: 1.67,
+                                                                                                                                letterSpacing: 'normal',
+                                                                                                                                color:'#6a6d74',
+                                                                                                            }}>
+                                                                                                                취소
+                                                                                                            </Typography>
+                                                                                                        </ButtonBase>
+                                                                                                    </Box>
+                                                                                                    </div>
+                                                                                                    :
+                                                                                                    <Typography style={{ 
+                                                                                                            paddingLeft:6,
+                                                                                                            paddingTop:6,
+                                                                                                            display:"block",
+
+                                                                                                            borderRadius: 3,
+                                                                                                            border: 'solid 1px #e3e7f0',
+                                                                                                            backgroundColor: '#ffffff',
+                                                                                                            maxWidth:346,minWidth:346,minHeight:36, height:36,
+
+                                                                                                            width:30, 
+                                                                                                            fontFamily: 'NotoSansCJKkr',
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight: 500,
+                                                                                                            fontStretch: 'normal',
+                                                                                                            fontStyle: 'normal',
+                                                                                                            lineHeight: 1.67,
+                                                                                                            letterSpacing: 'normal',
+                                                                                                            color:'#232426'}}
+                                                                                                            value={textfeild[i]} onChange={handleEditChangeinput}
                                                                                                     >
-                                                                                                    </InputBase>
+                                                                                                        {textfeild[i]}
+                                                                                                    </Typography>
+                                                                                                    }
+                                                                                                    {
+                                                                                                    
+                                                                                                    editOpen?
+                                                                                                    (k.id==selectCont)?
+                                                                                                    ""
+                                                                                                    :"" :
+                                                                                                    k.filetype?
                                                                                                     <Box style={{marginLeft:10,width:36,height:36}}
                                                                                                         visibility={k.filetype?"visible":"hidden"}>
+                                                                                                        <input hidden style = {{ display:"none", backgroundColor:"#f7f8fa",width:36,height:36,
+                                                                                                                        borderRadius: 5, border: 'solid 1px #e3e7f0',}} 
+                                                                                                                        id="contained-button-file" type="file"
+                                                                                                                        ref={inputReference} onChange={(e)=>{ fileUploadInputChange(e, k.id) } }
+                                                                                                                        />
                                                                                                         <ButtonBase style={{backgroundColor:"#f7f8fa",width:36,height:36,
-                                                                                                                        borderRadius: 5, border: 'solid 1px #e3e7f0',
-                                                                                                        }}
-                                                                                                        >
+                                                                                                                        borderRadius: 5, border: 'solid 1px #e3e7f0',}}
+                                                                                                                        onClick={(e) => {fileUploadAction(e,k.id)}}>
+                                                                                                                                
                                                                                                             <AttachFileSharpIcon style={{color: "#6a6d74"}}/>
                                                                                                         </ButtonBase>
                                                                                                     </Box>
+                                                                                                    :<Box style={{marginLeft:10,width:36,height:36}}
+                                                                                                        visibility={k.filetype?"hidden":"visible"}>
+                                                                                                        <ButtonBase style={{display:"flex", flexDirection:'column',
+                                                                                                                        backgroundColor:"#ffffff",width:36,height:36,
+                                                                                                                        borderRadius: 5, border: 'solid 1px #e3e7f0',}}
+                                                                                                                        onClick={ e => handleEditClick(e,k.id,textfeild[i])}
+                                                                                                                        >
+                                                                                                            <EditTwoToneIcon style={{color: "#6a6d74", marginTop:4, width:16,height:16}}/>
+                                                                                                            <Typography style={{width:30, 
+                                                                                                                                fontFamily: 'NotoSansCJKkr',
+                                                                                                                                fontSize: 8,
+                                                                                                                                fontWeight: 500,
+                                                                                                                                fontStretch: 'normal',
+                                                                                                                                fontStyle: 'normal',
+                                                                                                                                lineHeight: 1.67,
+                                                                                                                                letterSpacing: 'normal',
+                                                                                                                                color:'#6a6d74',
+                                                                                                            }}>
+                                                                                                                수정
+                                                                                                            </Typography>
+                                                                                                        </ButtonBase>
+                                                                                                    </Box>    
+                                                                                                    }
                                                                                                     
                                                                                                 </Box>
                                                                                             </Box>
@@ -592,17 +853,44 @@ export default function FullScreenDialog(props) {
                                                                     </Grid>
                                                                     
                                                                     <Grid item xs={4}>
-                                                                        <Box style={{borderBottom:'solid 1px #e3e7f0', 
+                                                                        <Box style={{position:"absolute", borderBottom:'solid 1px #e3e7f0', 
                                                                             borderRight:'solid 1px #e3e7f0', backgroundColor: '#ffffff'
-                                                                            ,height:48}}>
+                                                                            ,minHeight:48, width:354, marginTop:58}}>
+                                                                            
+                                                                            <Tabs
+                                                                                value={logvalue}
+                                                                                onChange={handleLogChange}
+                                                                                classes={{
+                                                                                    indicator:classes.logindicator
+                                                                                }}
+                                                                            >
+                                                                                <Tab label="회의실" className={classes.logtab}/>
+                                                                                <Tab label="변경이력" className={classes.logtab}/>
+                                                                            </Tabs>
                                                                         </Box>
                                                                         <Box style={{  height:'auto'}}>
                                                                             
                                                                         </Box>
+                                                                        <Box style={{  backgroundColor: '#fbfcfe',
+                                                                            borderTop:'solid 1px #e3e7f0', 
+                                                                            borderBottom:'solid 1px #e3e7f0', 
+                                                                            position: 'absolute', width:354, minHeight: 340, maxHeight:340, right:17, bottom:100}}>
+                                                                            {
+                                                                                logvalue==0? 
+                                                                                <Box>asd</Box>
+                                                                                :
+                                                                                    logvalue==1?
+                                                                                    <Box>dsa</Box>
+                                                                                    :
+                                                                                    <Box>None</Box>
+                                                                            }
+                                                                        
+                                                                        </Box>
+
                                                                         <Box style={{  backgroundColor: '#ffffff',
                                                                             borderTop:'solid 1px #e3e7f0', 
                                                                             borderBottom:'solid 1px #e3e7f0', 
-                                                                            position: 'absolute', width:360, height:100, right:0,bottom:0}}>
+                                                                            position: 'absolute', width:354, height:100, right:17, bottom:0}}>
                                                                                 <ButtonBase style={{    backgroundColor: '#ffffff',
                                                                                                         borderTop:'solid 1px #e3e7f0', 
                                                                                                         borderBottom:'solid 1px #e3e7f0', 

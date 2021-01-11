@@ -47,8 +47,10 @@ const drawerWidth = 180;
 const styles = makeStyles(theme => ({
   root: {
     display: 'flex',
-    minWidth: 1340,
+    maxWidth: window.innerWidth ,
     minHeight: 1,
+    maxHeight: window.innerHeight ,
+    overflow: "hidden",
   },
 
   drawer: {
@@ -207,7 +209,12 @@ export default function App() {
   const fixedHeightSidePaper = clsx(classes.sidepaper, classes.fixedHeight);
 
   React.useEffect(()=>{
-    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}`)
+    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}`,{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
       .then(response => response.json())
       .then(data => {
           setTitle(data[0].title);
@@ -321,8 +328,8 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="Files" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button>
-              <ListItemIcon component="a" onClick={ (event) => handleSelectSide(event,2,"Template" )} >
+            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,2,"Template" )} >
+              <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <LayersIcon/>
                 </Avatar>
