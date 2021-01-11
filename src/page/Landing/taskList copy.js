@@ -27,7 +27,7 @@ import DateRangeOutlinedIcon from '@material-ui/icons/DateRangeOutlined';
 import AttachFileSharpIcon from '@material-ui/icons/AttachFileSharp';
 import AddSharpIcon from '@material-ui/icons/AddSharp';
 
-import TaskInfo from '../../component/task/taskInfo';
+import TaskInfo from '../../component/task/TaskInfo';
 
 TabPanel.propTypes = {
     children: PropTypes.node,

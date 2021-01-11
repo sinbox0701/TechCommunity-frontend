@@ -120,15 +120,14 @@ class App extends Component {
     console.log(this.state.logged_in)
     return (
            <div className="App">
-        <Nav
+             <Nav
           logged_in={this.state.logged_in}
           display_form={this.display_form}
-          handle_logout={this.handle_logout}
         />
         {form}
           <BrowserRouter>
           {this.state.logged_in
-            ? <WrappedLoggedInRoutes/>
+            ? <WrappedLoggedInRoutes />
             : <WrappedLoggedOutRoutes />}
             </BrowserRouter>
            </div>

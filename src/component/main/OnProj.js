@@ -100,16 +100,18 @@ export default function RecipeReviewCard() {
   const [inputs, setInputs] = React.useState({
       genre:"",
       title:"",
-      direction:"",
-      construct:"",
+      directiont:"",
+      configurationt:"",
       check:"",
-      date:""
+      date:"",
+      place:"",
+      special:""
   });
-  const {genre, title, direction, construct, check, date} = inputs;
+  const {genre, title, directiont, configurationt, check, date, place, special} = inputs;
 
-  const delClick = (event) => {
+  const delClick = (id) => (event) => {
     event.preventDefault();
-    const {id} = event.target;
+    console.log(id)
     fetch(`http://127.0.0.1:8000/Tech/delete/${id}`,{
         method:'DELETE',
         headers:{
@@ -143,10 +145,12 @@ export default function RecipeReviewCard() {
        const post = {
            genre:genre,
            title:title,
-           direction:direction,
-           construct:construct,
+           directiont:directiont,
+           configurationt:configurationt,
            check:check,
-           date:date
+           date:date,
+           place:place,
+           special:special
     };
     console.log(post);
     fetch('http://127.0.0.1:8000/Tech/add/',{
@@ -234,9 +238,10 @@ return (
                                         {` 명 참여중`}
                                         </Typography>  
                                       </Box>
-                                      <IconButton aria-label="settings" className={classes.icon} id={p.id} onClick={delClick} >
-                                          <DeleteIcon />
-                                      </IconButton>
+                                          <IconButton aria-label="settings" className={classes.icon} id={p.id}  onClick={delClick(p.id)} >
+                                              <DeleteIcon />
+                                          </IconButton>
+
                                     </Box>
                                     <ButtonBase href={`/perf/=?${p.id}`}>
                                       <CardHeader
@@ -272,7 +277,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="genre"
-                        label="Genre"
+                        label="장르"
                         type="genre"
                         name="genre"
                         value={genre}
@@ -283,7 +288,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="title"
-                        label="Title"
+                        label="공연명"
                         type="title"
                         name="title"
                         value={title}
@@ -294,10 +299,10 @@ return (
                         autoFocus
                         margin="dense"
                         id="direction"
-                        label="Direction"
+                        label="공연 기획 방향(사업계획서)"
                         type="direction"
-                        name="direction"
-                        value={direction}
+                        name="directiont"
+                        value={directiont}
                         onChange={onChange}
                         fullWidth
                     />
@@ -305,10 +310,10 @@ return (
                         autoFocus
                         margin="dense"
                         id="construct"
-                        label="Construct"
+                        label="공연구성 및 내용(공연기획서)"
                         type="construct"
-                        name="construct"
-                        value={construct}
+                        name="configurationt"
+                        value={configurationt}
                         onChange={onChange}
                         fullWidth
                     />
@@ -316,7 +321,7 @@ return (
                         autoFocus
                         margin="dense"
                         id="check"
-                        label="Check"
+                        label="공연 횟수"
                         type="check"
                         name="check"
                         value={check}
@@ -327,13 +332,36 @@ return (
                         autoFocus
                         margin="dense"
                         id="date"
-                        label="Date"
+                        label="공연 일정"
                         type="date"
                         name="date"
                         value={date}
                         onChange={onChange}
                         fullWidth
                     />
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="place"
+                        label="공연 장소"
+                        type="place"
+                        name="place"
+                        value={place}
+                        onChange={onChange}
+                        fullWidth
+                    />
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="special"
+                        label="특이 사항"
+                        type="special"
+                        name="special"
+                        value={special}
+                        onChange={onChange}
+                        fullWidth
+                    />
+
                 </DialogContent>
                 <DialogActions>
                 <Button onClick={handleClose} color="primary">

@@ -1,5 +1,10 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {
+    fade,
+    ThemeProvider,
+    withStyles,
+    makeStyles,
+    createMuiTheme, } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -11,7 +16,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Slide from '@material-ui/core/Slide';
-import {Input, InputBase, Box, ButtonBase, Drawer, Grid, TextField} from '@material-ui/core';
+import {Input, InputBase, Box, ButtonBase, Drawer, Grid, TextField, InputLabel, FormControl} from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import axios from 'axios';
 
@@ -30,7 +35,16 @@ import DateRangeOutlinedIcon from '@material-ui/icons/DateRangeOutlined';
 import AttachFileSharpIcon from '@material-ui/icons/AttachFileSharp';
 import AddSharpIcon from '@material-ui/icons/AddSharp';
 
-import TaskInfo from '../../component/task/taskInfo';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import BeachAccessIcon from '@material-ui/icons/BeachAccess';
+
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Select from '@material-ui/core/Select';
+import ReplayIcon from '@material-ui/icons/Replay';
+import TaskInfo from '../../component/task/TaskInfo';
+
 
 TabPanel.propTypes = {
     children: PropTypes.node,
@@ -117,11 +131,31 @@ const useStyles = makeStyles((theme) => ({
         background:"#0068ff",
         color:"#0068ff"
       },
+      list: {
+            width: '100%',
+            maxWidth: 360,
+            backgroundColor: theme.palette.background.paper,
+        },
+        listDividerFullWidth: {
+            margin: `5px 0 0 ${theme.spacing(2)}px`,
+        },
+        listDividerInset: {
+            margin: `5px 0 0 ${theme.spacing(9)}px`,
+        },
+        formControl: {
+            margin: theme.spacing(1),
+            minWidth: 120,
+        },
+        selectEmpty: {
+            marginTop: theme.spacing(2),
+        },
 }));
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="left" ref={ref} {...props} />;
-});
+
+
+
+;
+
 
 export default function FullScreenDialog(props) {
   const classes = useStyles();
@@ -140,7 +174,9 @@ export default function FullScreenDialog(props) {
   const [tname,setTName] = React.useState([]);
 
   const [contents,setContents] = React.useState([]);
-  
+  const [comments,setComments] = React.useState([]);
+  const [logs,setLogs] = React.useState([]);
+
   const [clist,setClist] = React.useState([]);
   const [tlist,setTlist] = React.useState([]);
   const [cclist,setCclist] = React.useState([]);
@@ -154,7 +190,10 @@ export default function FullScreenDialog(props) {
   const [file, setFile] =  React.useState(null);
   const [desc, setDesc] =  React.useState("");
 
-
+  const [inputs,setInputs] = React.useState({
+      text:""
+  });
+  const {text} = inputs;
   const [state, setState] = React.useState(false);
   const [textfeild, setTextfeild] = React.useState(
     {
@@ -170,6 +209,31 @@ export default function FullScreenDialog(props) {
         10:"",
     }
   );
+   const [status, setStatus] = React.useState([]);
+  const handleStatus = (event) => {
+      console.log(event.target)
+      setStatus({
+          ...state,
+          [event.target.name]: event.target.value
+      });
+      console.log(status)
+  };
+   const handleSubmit = (e) =>{
+      e.preventDefault();
+       const post = {
+           status:status
+    };
+    console.log(post);
+     fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}/mod`,{
+         method:"PUT",
+         data: post,
+          headers: {
+             'Content-Type': 'application/json',
+             Authorization: `JWT ${localStorage.getItem('token')}`
+          },
+        }
+        ).then(res => res.json).then(data => console.log(data));
+  };
 
   const perfNum = (window.location.href.split("=?")[1]);
   const category = ["[공연기획] 기술 적용 검토", "[계획수립] 기술 적용 확정", "[제작회의] 기술 활용형태 협의", "[연출제작] 기술 연출제작", "[연출설치]"];
@@ -188,7 +252,27 @@ export default function FullScreenDialog(props) {
       setFileUploadState(e.target.value);
       setFile(e.target.files[0])
   }
-
+  const onChange = (e) =>{
+      const {name,value} = e.target;
+      setInputs({
+          ...inputs,
+          [name]:value
+      });
+  };
+  const onSubmit = (e) =>{
+      e.preventDefault();
+       const post = {
+           text:text
+    };
+    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}/com`,{
+         method: "POST",
+         headers:{
+             'content-type' : 'application/json',
+             Authorization: `JWT ${localStorage.getItem('token')}`
+         },
+         body: JSON.stringify(post)
+     }).then(res => res.json).then(data => console.log(data)).then(() => window.location.reload());
+  };
   const handleEditClick = (event, sc, v) => {
     setSelsectCont(sc);
     setOldcont(v);
@@ -256,7 +340,7 @@ export default function FullScreenDialog(props) {
     setFile(null)
     }).catch((error) => {
     setResponse("error");
-    })
+    }).then(() => window.location.reload())
   }
 
   function uploadWithFormData(){
@@ -306,20 +390,18 @@ export default function FullScreenDialog(props) {
       .then(data => {
           console.log(data)
           setTasks(data);
-          
           data.map( d => {
-            if(d.Dbool === true){
+            if(d.Dbool === 1){
                 TN.push(d)
             }
         })
     })
     console.log(TN)
     setTName(TN)
-
     const temp=[]
     if(select !== 0){
         if(select !== 3){
-            
+            console.log('ok')
             fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/${select}`,{
          method:"GET",
          headers: {
@@ -333,7 +415,10 @@ export default function FullScreenDialog(props) {
             })
         }
     }
+    //console.log(`calc(${window.innerHeight - 30} +px)`)
   },[]);
+
+
 
   React.useEffect(()=>{
     const tn = [];
@@ -359,9 +444,17 @@ export default function FullScreenDialog(props) {
             .then(data => {
                 console.log(data)
                 setContents(data);
+                data.map(d =>{
+                    temp.push(d.status)
+                })
+
             })
+            console.log(temp)
+            //console.log(status)
         }
     }
+    setStatus(temp)
+      console.log(status)
   },[select]);
 
   React.useEffect(()=>{
@@ -369,11 +462,13 @@ export default function FullScreenDialog(props) {
     const cnum  = [];
     const tl = [];
     const cc = [];
-    
+    const com =[];
+    const log = []
+
     if(contents !== []){
         console.log(contents)
         contents.map( c =>{
-        if(c.Dbool === false){
+        if(c.Dbool === 0){
             cc.push(c);
             cl.push(c.DetName);
             cnum.push(c.DetNum);
@@ -383,12 +478,18 @@ export default function FullScreenDialog(props) {
                 tl.push(c)
             }
         }
+        if(c.text !== undefined){
+            com.push(c);
+        }
+        if(c.mod !== undefined){
+            log.push(c);
+        }
         });
     }
 
     const unqcl = Array.from(new Set(cl));
     const unqcnum = Array.from(new Set(cnum));
-    
+
     console.log(cc);
     setCclist(cc);
     console.log(unqcl);
@@ -396,8 +497,12 @@ export default function FullScreenDialog(props) {
     console.log(unqcnum);
     setCNumlist(unqcnum);
 
+    console.log(com);
+    setComments(com);
     console.log(tl);
     setTlist(tl);
+    console.log(log);
+    setLogs(log);
 
   },[contents]);
 
@@ -484,13 +589,12 @@ export default function FullScreenDialog(props) {
                         {
                             tasks.map( (t,index) => 
                                 {
-                                    if (t.Dbool === true){
+                                    if (t.Dbool === 1){
                                         if (t.category === i+1){
                                             return (
                                                 <Box style={{backgroundColor: '#ffffff', width:280, height:88, marginBottom:12,
                                                             borderRadius: 5,
                                                             border: "solid 1px #cacfdb",
-                                                            backgroundColor: "#ffffff",
                                                             boxShadow: "0 5px 16px -5px #a4a9b3",
                                                     }}>
                                                     <ButtonBase style={{ width:280, height:44, justifyContent:"flex-start"
@@ -516,25 +620,25 @@ export default function FullScreenDialog(props) {
                                                                         <Box style={{ zIndex:300, position:"absolute", borderBottom:'solid 1px #e3e7f0',backgroundColor: '#ffffff',
                                                                             maxWidth:1080, maxHeight:56, overflow:"hidden"}}>
                                                                                 <Box style={{ position:'static',display:"flex", flexDirection:'row', alignItems:'center', justifyItems:'center', width:1080, height:56}}>
-                                                                                    <Box style={{ display:"flex", flexDirection:'row', alignItems:'center', borderRadius: 3, backgroundColor: '#f7f8fa', width:79, height:24, marginLeft:16 }}>
-                                                                                        <Typography align= 'center' style={{
-                                                                                                            marginLeft:4,      
-                                                                                                            width:79,
-                                                                                                            fontFamily: 'NotoSansCJKkr',
-                                                                                                            fontSize: 12,
-                                                                                                            fontWeight: 500,
-                                                                                                            fontStretch: 'normal',
-                                                                                                            fontStyle: 'normal',
-                                                                                                            lineHeight: 1.67,
-                                                                                                            letterSpacing: 'normal',
-                                                                                                            color: '#a4a9b3',
-                                                                                        }}>
-                                                                                        진행예정
-                                                                                        </Typography>
-                                                                                        <IconButton style={{width:16,height:16}} >
-                                                                                            <ExpandMoreIcon aria-label="expandstata" style={{width:16,height:16}}/>
-                                                                                        </IconButton>
-                                                                                    </Box>
+                                                                                         <form className={classes.formControl} onSubmit={handleSubmit}>
+                                                                                            <Select
+                                                                                              value={status[t.id]}
+                                                                                              name={t.id}
+                                                                                              onChange={handleStatus}
+                                                                                              displayEmpty
+                                                                                              className={classes.selectEmpty}
+                                                                                              inputProps={{ 'aria-label': 'Without label' }}
+                                                                                              style={{ display:"flex", flexDirection:'row', alignItems:'center', borderRadius: 3, width:79, height:24, marginLeft:16, fontSize:12, backgroundColor:'#f7f8fa' }}
+                                                                                            >
+                                                                                              <MenuItem value={0}>
+                                                                                                <em>진행 예정</em>
+                                                                                              </MenuItem>
+                                                                                              <MenuItem value={1}>진행중</MenuItem>
+                                                                                              <MenuItem value={2}>완료</MenuItem>
+                                                                                            </Select>
+
+                                                                                          </form>
+
                 
                                                                                     <Typography style={{marginLeft:10, width:760, color: '#232426'}}>{t.TName}</Typography>
 
@@ -567,7 +671,7 @@ export default function FullScreenDialog(props) {
                                                                             borderRight:'solid 1px #e3e7f0', 
                                                                             backgroundColor: '#ffffff'
                                                                             , minHeight:192, marginTop:56}}>
-                                                                             <TaskInfo obj={t.objective}/>
+                                                                             <TaskInfo obj={t}/>
                                                                         </Box>
                                                                         <Box style={{ display: 'flex',flexDirection: 'row', alignItems: 'start',justifyContent: 'flex-start',overflow:"auto"}}>
                                                                             <Box  style={{
@@ -867,31 +971,84 @@ export default function FullScreenDialog(props) {
                                                                                 <Tab label="회의실" className={classes.logtab}/>
                                                                                 <Tab label="변경이력" className={classes.logtab}/>
                                                                             </Tabs>
+
                                                                         </Box>
                                                                         <Box style={{  height:'auto'}}>
-                                                                            
+
                                                                         </Box>
-                                                                        <Box style={{  backgroundColor: '#fbfcfe',
-                                                                            borderTop:'solid 1px #e3e7f0', 
-                                                                            borderBottom:'solid 1px #e3e7f0', 
-                                                                            position: 'absolute', width:354, minHeight: 340, maxHeight:340, right:17, bottom:100}}>
+                                                                        <Box style={{
+                                                                            backgroundColor: '#fbfcfe',
+                                                                            borderTop:'solid 1px #e3e7f0',
+                                                                            borderBottom:'solid 1px #e3e7f0',
+                                                                            position: 'absolute', width:354, minHeight: window.innerHeight - 270 , maxHeight:  window.innerHeight - 270,overflowY:"auto",right:19, bottom:100}}>
                                                                             {
-                                                                                logvalue==0? 
-                                                                                <Box>asd</Box>
+                                                                                logvalue==0?
+                                                                                comments.map(cm =>{
+                                                                                        return(
+                                                                                            <Box>
+                                                                                                <List>
+                                                                                                      <Divider component="li" />
+                                                                                                      <li>
+                                                                                                        <Typography
+                                                                                                          className={classes.dividerFullWidth}
+                                                                                                          color="textSecondary"
+                                                                                                          display="block"
+                                                                                                          variant="caption"
+                                                                                                        >
+                                                                                                          {cm.username}
+                                                                                                        </Typography>
+                                                                                                      </li>
+                                                                                                      <ListItem>
+                                                                                                        <ListItemText primary={cm.text} secondary={cm.create} />
+                                                                                                      </ListItem>
+                                                                                                </List>
+                                                                                            </Box>
+                                                                                        );
+                                                                                        })
                                                                                 :
-                                                                                    logvalue==1?
-                                                                                    <Box>dsa</Box>
-                                                                                    :
-                                                                                    <Box>None</Box>
+                                                                                logvalue==1?
+                                                                                logs.map(lo =>{
+                                                                                    return (
+                                                                                        <Box>
+                                                                                                <List>
+                                                                                                      <Divider component="li" />
+                                                                                                      <li>
+                                                                                                        <Typography
+                                                                                                          className={classes.dividerFullWidth}
+                                                                                                          color="textSecondary"
+                                                                                                          display="block"
+                                                                                                          variant="caption"
+                                                                                                        >
+                                                                                                          {lo.username}
+                                                                                                        </Typography>
+                                                                                                      </li>
+                                                                                                      <ListItem>
+                                                                                                        <ListItemText primary={lo.mod} secondary={lo.date} />
+                                                                                                      </ListItem>
+                                                                                                </List>
+                                                                                            </Box>
+
+                                                                                    );
+                                                                                })
+                                                                                :
+                                                                                <Box>None</Box>
                                                                             }
                                                                         
                                                                         </Box>
-
+                                                                        <form onSubmit={onSubmit}>
                                                                         <Box style={{  backgroundColor: '#ffffff',
                                                                             borderTop:'solid 1px #e3e7f0', 
                                                                             borderBottom:'solid 1px #e3e7f0', 
-                                                                            position: 'absolute', width:354, height:100, right:17, bottom:0}}>
-                                                                                <ButtonBase style={{    backgroundColor: '#ffffff',
+                                                                            position: 'absolute', width:354, height:100, right:19, bottom:0}}>
+                                                                             <InputBase
+                                                                                className={classes.margin}
+                                                                                type='text'
+                                                                                name='text'
+                                                                                value={text}
+                                                                                inputProps={{ 'aria-label': 'naked' }}
+                                                                                onChange={onChange}
+                                                                             />
+                                                                                <ButtonBase type='submit' style={{
                                                                                                         borderTop:'solid 1px #e3e7f0', 
                                                                                                         borderBottom:'solid 1px #e3e7f0', 
                                                                                                         position: 'absolute', width:44, height:36, right:0, marginTop:32,marginRight:12,
@@ -911,6 +1068,7 @@ export default function FullScreenDialog(props) {
                                                                                     </Typography>
                                                                                 </ButtonBase>
                                                                         </Box>
+                                                                        </form>
                                                                     </Grid>
                                                                 </Grid>
                                                             </Box>
@@ -927,10 +1085,11 @@ export default function FullScreenDialog(props) {
                                                                 }}>
                                                             공연 연출팀
                                                         </ButtonBase>
-                                                        
+
                                                         <ButtonBase style={{marginLeft:112}}>
                                                             마감일
                                                         </ButtonBase>
+
                                                             
                                                     </Box>
                                                 </Box>

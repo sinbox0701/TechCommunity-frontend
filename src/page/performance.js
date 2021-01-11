@@ -1,5 +1,6 @@
 import React from "react"
 import { BrowserRouter as Router,Route,Switch } from "react-router-dom";
+import FileSaver from 'file-saver'
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -25,6 +26,11 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+
+
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
 function Copyright() {
   return (
@@ -57,6 +63,11 @@ const styles = makeStyles(theme => ({
     backgroundColor:"#fbfcfe",
     flexGrow: 1,
     width:540,
+  },
+  list: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
   },
   
   toolbar: {
@@ -175,7 +186,7 @@ const styles = makeStyles(theme => ({
     boxShadow: "0 2px 14px -6px #a4a9b3"
   },
   drawerSideColse:{height:'calc(100% - 64px)', top:65, left: drawerWidth ,overflow:"visible"},
-  drawerSideColse:{height:'calc(100% - 64px)', top:65, left: theme.spacing(9) ,overflow:"visible"},
+  //drawerSideColse:{height:'calc(100% - 64px)', top:65, left: theme.spacing(9) ,overflow:"visible"},
 }));
 
 export default function App() {
@@ -189,8 +200,15 @@ export default function App() {
 
   const [title, setTitle] = React.useState("");
   const [category, setCategory] = React.useState([]);
-
+  const [username, setUsername] = React.useState([]);
+  const [file, setFile] = React.useState([]);
   const [sidetitle, setSidetitle] = React.useState("");
+  const [bFile,setBFile] = React.useState([]);
+  const [state, setState] = React.useState({
+      displayed_form: '',
+      logged_in: localStorage.getItem('token') ? true : false,
+      username: ''
+    });
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -217,11 +235,86 @@ export default function App() {
       })
       .then(response => response.json())
       .then(data => {
+        console.log(data);
+
           setTitle(data[0].title);
           setTasks(data);
       })
   },[]);
+    React.useEffect(()=>{
+    fetch(`http://127.0.0.1:8000/Tech/catask/${perfNum}/file`,{
+         method:"GET",
+         headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setFile(data);
+      })
+  },[]);
+    const downLink = (f) => (event) => {
+      //const dfile=[];
+      console.log(f)
+      event.preventDefault();
+        if(f.f.fcontent !== undefined){
+          if(f.f.fcontent !== null) {
+            fetch(`http://127.0.0.1:8000${f.f.fcontent}`, {
+              method: "GET",
+              headers: {
+                Authorization: `JWT ${localStorage.getItem('token')}`
+              },
+            }).then(response => response.blob())
+                .then(data => {
+                  //let url = window.URL.createObjectURL(data);
+                  console.log(data);
+                  const url = window.URL.createObjectURL(data);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.setAttribute('download', `${f.f.name}`);
+                  document.body.appendChild(link);
+                  link.click();
+                  //console.log(url);
+                  //dfile.push(data);
 
+                })
+          }
+        }
+      //console.log()
+      //setBFile(dfile);
+      //FileSaver.saveAs(dfile[0],`${dfile[0]}`);
+          //const blob = new Blob([dfile[0]], {type: `${dfile[0].type}`});
+      // dfile.map(df=>{
+      //   console.log(df);
+      //   let url = window.URL.createObjectURL(df);
+      //   console.log(url);
+      // })
+
+          //setBFile(dfile.data);
+          //console.log(bFile);
+        //  let url = window.URL.createObjectURL(bFile[0]);
+
+         // const date = Moment(new Date()).format("YYYY_MM_DD-HH_mm_ss");
+
+          // Creating the hyperlink and auto click it to start the download
+        //  let link = document.createElement('a');
+        //  link.href = url;
+        // link.download = 'dump_.pdf';
+       //   link.click();
+    }
+  React.useEffect(()=>{
+
+            fetch('http://localhost:8000/Tech/current_user/', {
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            }).then(res => res.json()).then(json => {
+              console.log(json)
+              setUsername(json.username);
+            });
+
+    },[username]);
   React.useEffect(()=>{
     console.log(sidewidth)
     if(open === true){
@@ -238,6 +331,11 @@ export default function App() {
     }
     console.log(s);
     setSideopen(s);
+  };
+  const handle_logout = () => {
+    localStorage.removeItem('token');
+    setState({ logged_in: false, username: '' });
+
   };
 
   return (
@@ -269,9 +367,18 @@ export default function App() {
 
             <Divider variant="middle" orientation="vertical" flexItem />
 
+            <ButtonBase href={'/'}>
+            <IconButton onClick={handle_logout}>
+                <Avatar className={classes.menuIcon}>
+                  <ExitToAppIcon />
+                </Avatar>
+            </IconButton>
+            </ButtonBase>
+
+            <Divider variant="middle" orientation="vertical" flexItem />
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             <Typography color="textSecondary" variant="button" noWrap>
-              사용자명
+              {username}
             </Typography>
         
             
@@ -312,7 +419,7 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="처음으로" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,0,"Team")} style={{marginTop:40}} > 
+            <ListItem button component="a" /*onClick={ (event) => handleSelectSide(event,0,"Team")} style={{marginTop:40}}*/ >
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <PeopleAltTwoToneIcon />
@@ -328,7 +435,7 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="Files" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a" onClick={ (event) => handleSelectSide(event,2,"Template" )} >
+            <ListItem button component="a" /*onClick={ (event) => handleSelectSide(event,2,"Template" )}*/ >
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <LayersIcon/>
@@ -336,7 +443,7 @@ export default function App() {
               </ListItemIcon>
               <ListItemText primary="Template" style={{color:'#6a6d74'}}/>
             </ListItem>
-            <ListItem button component="a"  onClick={ (event) => handleSelectSide(event,3,"Recycle Bin")} >
+            <ListItem button component="a"  /*onClick={ (event) => handleSelectSide(event,3,"Recycle Bin")}*/ >
               <ListItemIcon>
                 <Avatar className={classes.menuIcon}>
                   <DeleteForeverIcon/>
@@ -357,7 +464,7 @@ export default function App() {
                 <Grid container>
                     <Grid>
                         <Box style={{  borderBottom:'solid 1px #e3e7f0',backgroundColor: '#ffffff',
-                            width:1080, height:56}}>
+                            width:1080, height:70}}>
                                 <Box>
                                     <Typography style={{  fontSize:25,  
                                                           fontWeight: 'bold',
@@ -367,8 +474,35 @@ export default function App() {
                                                           letterSpacing: 0,
                                                           color: "#6a6d74", 
                                         marginLeft:20, marginTop:20 ,display: 'flex',flexDirection: 'row', alignItems: 'center'}}>
-                                        {sidetitle} 
+                                        {sidetitle}
                                     </Typography>
+                                    <Box style={{
+                                      width:540,
+                                      position:'absolute',
+                                      minHeight: window.innerHeight - 270 , maxHeight:  window.innerHeight - 270,overflowY:"auto"}}>
+                                      {
+                                        file.map( f => {
+                                          if(f.fcontent!==undefined){
+                                            return(
+                                                <Box>
+                                                   <List className={classes.list} >
+                                                    <ListItem>
+                                                      <ListItemAvatar>
+                                                        <Avatar>
+                                                        <IconButton onClick={downLink({f})} >
+                                                          <ArrowDownwardIcon/>
+                                                        </IconButton>
+                                                        </Avatar>
+                                                      </ListItemAvatar>
+                                                      <ListItemText primary={f.name} secondary={f.storage} />
+                                                    </ListItem>
+                                                  </List>
+                                                </Box>
+                                            );
+                                          }
+                                        })
+                                      }
+                                  </Box>
                                 </Box>
                         </Box>
                     </Grid>
